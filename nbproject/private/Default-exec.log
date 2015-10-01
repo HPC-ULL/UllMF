@@ -1,0 +1,16 @@
+called: /usr/bin/gcc
+	/home/acabrera/workspace/codes/calibrate
+	/usr/bin/gcc
+	-std=c99
+	-DDEBUG
+	-DHAVE_EML
+	-g
+	-O2
+	-Wall
+	-c
+	calibrate_mpi.c
+	-o
+	calibrate_mpi.o
+	-lm
+	-pthread
+

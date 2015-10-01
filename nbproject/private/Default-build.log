@@ -1,0 +1,312 @@
+mpicc -std=c99 -DDEBUG -DHAVE_EML -g -O2 -Wall -c calibrate_mpi.c -o calibrate_mpi.o -lm 
+calibrate_mpi.c:70:3: error: nombre de tipo ‘cal_energy_strategy’ desconocido
+   cal_energy_strategy* energy;
+   ^~~~~~~~~~~~~~~~~~~
+calibrate_mpi.c: En la función ‘_calculate_move’:
+calibrate_mpi.c:114:53: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+     if (!_is_movement_legal(current_ratios[i], calib->ratio_step, direction)) {
+                                                     ^~
+calibrate_mpi.c:115:53: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+       simulated_energy += (current_ratios[i] + calib->ratio_step * direction) * calib->total_count / calib->work_per_joule[i];
+                                                     ^~
+calibrate_mpi.c:115:107: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+       simulated_energy += (current_ratios[i] + calib->ratio_step * direction) * calib->total_count / calib->work_per_joule[i];
+                                                                                                           ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c:127:86: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+     dbglog_info("                     %.2f * %zu / %.2f\n", current_ratios[i] + calib->ratio_step * dirs[i],
+                                                                                      ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:127:5: nota: en expansión de macro ‘dbglog_info’
+     dbglog_info("                     %.2f * %zu / %.2f\n", current_ratios[i] + calib->ratio_step * dirs[i],
+     ^~~~~~~~~~~
+calibrate_mpi.c:128:42: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+                 calib->total_count, calib->work_per_joule[i]);
+                                          ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:127:5: nota: en expansión de macro ‘dbglog_info’
+     dbglog_info("                     %.2f * %zu / %.2f\n", current_ratios[i] + calib->ratio_step * dirs[i],
+     ^~~~~~~~~~~
+calibrate_mpi.c:134:44: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+       ratios[i] = current_ratios[i] + calib->ratio_step * dirs[i];
+                                            ^~
+calibrate_mpi.c:139:10: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+     calib->last_direction = dirs[0];
+          ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c: En la función ‘calibrate_root’:
+calibrate_mpi.c:178:37: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+       dbglog_append("%.4f ", calib->energyvalues[i]);
+                                     ^
+debug.h:10:53: nota: en definición de macro ‘DBGLOG2’
+ #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
+                                                     ^~~~~~~~~~~
+calibrate_mpi.c:178:7: nota: en expansión de macro ‘dbglog_append’
+       dbglog_append("%.4f ", calib->energyvalues[i]);
+       ^~~~~~~~~~~~~
+calibrate_mpi.c:184:37: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+       dbglog_append("%8g " , calib->energyvalues[i] / calib->counts[i]);
+                                     ^
+debug.h:10:53: nota: en definición de macro ‘DBGLOG2’
+ #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
+                                                     ^~~~~~~~~~~
+calibrate_mpi.c:184:7: nota: en expansión de macro ‘dbglog_append’
+       dbglog_append("%8g " , calib->energyvalues[i] / calib->counts[i]);
+       ^~~~~~~~~~~~~
+calibrate_mpi.c:188:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+     if (calib->ratio_step < calib->threshold && calib->inverted > 0) {
+              ^~
+calibrate_mpi.c:188:56: error: ‘struct cal_calibration’ has no member named ‘inverted’; did you mean ‘started’?
+     if (calib->ratio_step < calib->threshold && calib->inverted > 0) {
+                                                        ^~~~~~~~
+                                                        started
+calibrate_mpi.c:191:16: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘restart_value’
+       if (calib->restart_value > r) {
+                ^~
+calibrate_mpi.c:194:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+         calib->ratio_step = 0.25;
+              ^~
+calibrate_mpi.c:195:16: error: ‘struct cal_calibration’ has no member named ‘inverted’; did you mean ‘started’?
+         calib->inverted = 0;
+                ^~~~~~~~
+                started
+calibrate_mpi.c:196:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+         calib->last_direction = NONE;
+              ^~
+calibrate_mpi.c:197:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘prev_total_energy_sum’
+         calib->prev_total_energy_sum = 9999999;
+              ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c:245:41: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+       dbglog_append(DBG_FMT " ", calib->energyvalues[i]);
+                                         ^
+debug.h:10:53: nota: en definición de macro ‘DBGLOG2’
+ #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
+                                                     ^~~~~~~~~~~
+calibrate_mpi.c:245:7: nota: en expansión de macro ‘dbglog_append’
+       dbglog_append(DBG_FMT " ", calib->energyvalues[i]);
+       ^~~~~~~~~~~~~
+calibrate_mpi.c:252:22: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+       watts = calib->energyvalues[i] / calib->timevalues[i];
+                      ^~~~~~~~~~~~
+                      timevalues
+calibrate_mpi.c:267:18: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+       if (calib->energyvalues[i] <= 0 || calib->timevalues[i] <= 0) {
+                  ^~~~~~~~~~~~
+                  timevalues
+calibrate_mpi.c:273:36: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+         total_energy_sum += calib->energyvalues[i];
+                                    ^~~~~~~~~~~~
+                                    timevalues
+calibrate_mpi.c:277:56: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+         aux_work_per_joule = calib->counts[i] / calib->energyvalues[i];
+                                                        ^~~~~~~~~~~~
+                                                        timevalues
+calibrate_mpi.c:281:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+         calib->work_per_joule[i] = aux_work_per_joule;
+              ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c:283:39: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+       dbglog_append(DBG_FMT " ", calib->work_per_joule[i]);
+                                       ^
+debug.h:10:53: nota: en definición de macro ‘DBGLOG2’
+ #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
+                                                     ^~~~~~~~~~~
+calibrate_mpi.c:283:7: nota: en expansión de macro ‘dbglog_append’
+       dbglog_append(DBG_FMT " ", calib->work_per_joule[i]);
+       ^~~~~~~~~~~~~
+calibrate_mpi.c:284:34: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+       work_per_joule_sum += calib->work_per_joule[i];
+                                  ^~
+calibrate_mpi.c:299:49: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘prev_total_energy_sum’
+     double comparison = total_energy_sum / calib->prev_total_energy_sum - 1;
+                                                 ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c:303:53: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+     dbglog_info("      Starting step: %.2f\n", calib->ratio_step);
+                                                     ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:303:5: nota: en expansión de macro ‘dbglog_info’
+     dbglog_info("      Starting step: %.2f\n", calib->ratio_step);
+     ^~~~~~~~~~~
+calibrate_mpi.c:304:102: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘prev_total_energy_sum’
+     dbglog_info("       Total Energy: %.2f (prev: %.2f, comparison: %.2f)\n", total_energy_sum, calib->prev_total_energy_sum, comparison);
+                                                                                                      ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:304:5: nota: en expansión de macro ‘dbglog_info’
+     dbglog_info("       Total Energy: %.2f (prev: %.2f, comparison: %.2f)\n", total_energy_sum, calib->prev_total_energy_sum, comparison);
+     ^~~~~~~~~~~
+calibrate_mpi.c:306:49: error: ‘struct cal_calibration’ has no member named ‘inverted’; did you mean ‘started’?
+     if (comparison < calib->threshold || calib->inverted == 2) { // If previos movement is good, comparison should be less than threshold
+                                                 ^~~~~~~~
+                                                 started
+calibrate_mpi.c:307:14: error: ‘struct cal_calibration’ has no member named ‘inverted’; did you mean ‘started’?
+       calib->inverted = 0;
+              ^~~~~~~~
+              started
+calibrate_mpi.c:314:14: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+         calib->ratio_step /= 2;
+              ^~
+In file included from calibrate_mpi.c:2:0:
+calibrate_mpi.c:317:75: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+           dbglog_info("              NOT MOVING, new step = %.2f\n", calib->ratio_step);
+                                                                           ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:317:11: nota: en expansión de macro ‘dbglog_info’
+           dbglog_info("              NOT MOVING, new step = %.2f\n", calib->ratio_step);
+           ^~~~~~~~~~~
+calibrate_mpi.c:322:113: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+       dbglog_info("              INVERTING, %.3f, %.3f, %.3f, %d\n", current_ratios[0], current_ratios[1], calib->ratio_step, calib->last_direction);
+                                                                                                                 ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:322:7: nota: en expansión de macro ‘dbglog_info’
+       dbglog_info("              INVERTING, %.3f, %.3f, %.3f, %d\n", current_ratios[0], current_ratios[1], calib->ratio_step, calib->last_direction);
+       ^~~~~~~~~~~
+calibrate_mpi.c:322:132: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+       dbglog_info("              INVERTING, %.3f, %.3f, %.3f, %d\n", current_ratios[0], current_ratios[1], calib->ratio_step, calib->last_direction);
+                                                                                                                                    ^
+debug.h:8:102: nota: en definición de macro ‘DBGLOG’
+ #define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+                                                                                                      ^~~~~~~~~~~
+calibrate_mpi.c:322:7: nota: en expansión de macro ‘dbglog_info’
+       dbglog_info("              INVERTING, %.3f, %.3f, %.3f, %d\n", current_ratios[0], current_ratios[1], calib->ratio_step, calib->last_direction);
+       ^~~~~~~~~~~
+calibrate_mpi.c:323:51: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘ratio_step’
+       _invert_ratios(ratios, current_ratios, calib->ratio_step, calib->last_direction);
+                                                   ^~
+calibrate_mpi.c:323:70: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+       _invert_ratios(ratios, current_ratios, calib->ratio_step, calib->last_direction);
+                                                                      ^~
+calibrate_mpi.c:324:12: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+       calib->last_direction = _invert_direction(calib->last_direction);
+            ^~
+calibrate_mpi.c:324:54: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘last_direction’
+       calib->last_direction = _invert_direction(calib->last_direction);
+                                                      ^~
+calibrate_mpi.c:325:14: error: ‘struct cal_calibration’ has no member named ‘inverted’; did you mean ‘started’?
+       calib->inverted += 1;
+              ^~~~~~~~
+              started
+calibrate_mpi.c:330:10: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘prev_total_energy_sum’
+     calib->prev_total_energy_sum = total_energy_sum;
+          ^~
+calibrate_mpi.c:258:10: aviso: se define la variable ‘work_per_joule_sum’ pero no se usa [-Wunused-but-set-variable]
+   double work_per_joule_sum = 0.0;
+          ^~~~~~~~~~~~~~~~~~
+calibrate_mpi.c: En la función ‘calibrate’:
+calibrate_mpi.c:450:22: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+   MPI_Gather(&calib->energyvalues[calib->comm_rank], 1, MPI_DOUBLE,
+                      ^~~~~~~~~~~~
+                      timevalues
+calibrate_mpi.c:451:12: error: ‘struct cal_calibration’ has no member named ‘energyvalues’; did you mean ‘timevalues’?
+     calib->energyvalues, 1, MPI_DOUBLE,
+            ^~~~~~~~~~~~
+            timevalues
+calibrate_mpi.c: En la función ‘cal_mpi_shutdown’:
+calibrate_mpi.c:489:7: error: ‘calib’ undeclared (first use in this function); did you mean ‘calloc’?
+   if (calib->calibrating_energy) {
+       ^~~~~
+       calloc
+calibrate_mpi.c:489:7: nota: cada identificador sin declarar se reporta sólo una vez para cada función en el que aparece
+calibrate_mpi.c: En el nivel principal:
+calibrate_mpi.c:510:16: error: tipos en conflicto para ‘cal_mpi_setup’
+ enum cal_error cal_mpi_setup(
+                ^~~~~~~~~~~~~
+In file included from calibrate_mpi.c:14:0:
+calibrate_mpi.h:28:16: nota: la declaración previa de ‘cal_mpi_setup’ estaba aquí
+ enum cal_error cal_mpi_setup(
+                ^~~~~~~~~~~~~
+calibrate_mpi.c: En la función ‘cal_mpi_setup’:
+calibrate_mpi.c:566:18: error: petición del miembro ‘values’ en algo que no es una estructura o unión
+     calib->energy->values = malloc(calib->comm_size * sizeof(double));
+                  ^~
+calibrate_mpi.c:567:18: error: petición del miembro ‘work_per_joule’ en algo que no es una estructura o unión
+     calib->energy->work_per_joule = malloc(calib->comm_size * sizeof(double));
+                  ^~
+calibrate_mpi.c:569:12: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘work_per_joule’
+       calib->work_per_joule[i] = -1.0;
+            ^~
+calibrate_mpi.c:571:18: error: petición del miembro ‘iteration_interval’ en algo que no es una estructura o unión
+     calib->energy->iteration_interval = 0;
+                  ^~
+calibrate_mpi.c:572:18: error: petición del miembro ‘previous_total_sum’ en algo que no es una estructura o unión
+     calib->energy->previous_total_sum = DBL_MAX;
+                  ^~
+calibrate_mpi.c:573:18: error: petición del miembro ‘last_direction’ en algo que no es una estructura o unión
+     calib->energy->last_direction = NONE;
+                  ^~
+calibrate_mpi.c:574:18: error: petición del miembro ‘inverted’ en algo que no es una estructura o unión
+     calib->energy->inverted = 0;
+                  ^~
+calibrate_mpi.c:575:18: error: petición del miembro ‘ratio_step’ en algo que no es una estructura o unión
+     calib->energy->ratio_step = 1 / (double) (calib->comm_size * 2);
+                  ^~
+calibrate_mpi.c:576:12: error: ‘struct cal_calibration’ has no member named ‘current_it’; did you mean ‘current_iteration’?
+     calib->current_it = 0;
+            ^~~~~~~~~~
+            current_iteration
+calibrate_mpi.c:577:18: error: petición del miembro ‘started’ en algo que no es una estructura o unión
+     calib->energy->started = false;
+                  ^~
+calibrate_mpi.c:579:18: error: petición del miembro ‘calibrating_energy’ en algo que no es una estructura o unión
+     calib->energy->calibrating_energy = 0;
+                  ^~
+calibrate_mpi.c:581:18: error: petición del miembro ‘total_it’ en algo que no es una estructura o unión
+     calib->energy->total_it = total_it;
+                  ^~
+calibrate_mpi.c:582:18: error: petición del miembro ‘restart_step’ en algo que no es una estructura o unión
+     calib->energy->restart_step = restart_step;
+                  ^~
+calibrate_mpi.c:583:18: error: petición del miembro ‘restart_value’ en algo que no es una estructura o unión
+     calib->energy->restart_value = restart_value;
+                  ^~
+calibrate_mpi.c:585:18: error: petición del miembro ‘measurement_interval’ en algo que no es una estructura o unión
+     calib->energy->measurement_interval = measurement_interval;
+                  ^~
+calibrate_mpi.c: En la función ‘cal_mpi_free’:
+calibrate_mpi.c:598:7: error: ‘strategy’ undeclared (first use in this function); did you mean ‘cal_strategy’?
+   if (strategy & CAL_ENERGY_STRATEGY) {
+       ^~~~~~~~
+       cal_strategy
+calibrate_mpi.c:599:23: error: petición del miembro ‘values’ en algo que no es una estructura o unión
+     free(calib->energy->values);
+                       ^~
+calibrate_mpi.c:600:23: error: petición del miembro ‘work_per_joule’ en algo que no es una estructura o unión
+     free(calib->energy->work_per_joule);
+                       ^~
+calibrate_mpi.c: En la función ‘cal_mpi_start’:
+calibrate_mpi.c:619:10: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘energy_measured’
+     calib->energy_measured = 0;
+          ^~
+calibrate_mpi.c:620:22: error: petición del miembro ‘iteration_interval’ en algo que no es una estructura o unión
+     if (calib->energy->iteration_interval != 0 &&
+                      ^~
+calibrate_mpi.c:621:49: error: petición del miembro ‘iteration_interval’ en algo que no es una estructura o unión
+         calib->current_iteration % calib->energy->iteration_interval == 0) {
+                                                 ^~
+calibrate_mpi.c:622:12: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘calibrating_energy’
+       calib->calibrating_energy = 1;
+            ^~
+calibrate_mpi.c:626:12: error: ‘struct cal_calibration’ no tiene un miembro llamado ‘first_energy_calibration_time’
+       calib->first_energy_calibration_time = calib->timevalues[calib->comm_rank];
+            ^~
+calibrate_mpi.c: En el nivel principal:
+calibrate_mpi.c:642:1: error: expected declaration specifiers or ‘...’ before ‘)’ token
+ )
+ ^
+calibrate_mpi.c:446:13: aviso: se define ‘calibrate’ pero no se usa [-Wunused-function]
+ static void calibrate(struct cal_calibration* calib) {
+             ^~~~~~~~~
+make: *** [makefile:4: all] Error 1
