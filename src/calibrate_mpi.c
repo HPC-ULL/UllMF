@@ -86,8 +86,10 @@ static Direction _invert_direction(Direction d) {
 
 static enum cal_strategy _select_strategy(struct cal_calibration* calib) {
     //XXX if calib energy is currently active, check it has ended to change it
-    if (calib->energy->calibrating)
-        return CAL_STRATEGY_ENERGY;
+    if (calib->current_strategy & CAL_STRATEGY_ENERGY) {
+        if (calib->energy->calibrating)
+            return CAL_STRATEGY_ENERGY;
+    }
     return calib->strategy;
 }
 
@@ -602,17 +604,18 @@ enum cal_error cal_mpi_start(struct cal_calibration* const calib) {
     if (calib->started)
         return CAL_ALREADY_STARTED;
 
+//    dbglog_info("  cal_mpi_start in\n");
     double current_time = MPI_Wtime();
     calib->current_iteration++;
+//    dbglog_info("  select_strategy in\n");
     calib->current_strategy = _select_strategy(calib);
+//    dbglog_info("  select_strategy out\n");
 
     //if (calib->current_strategy & CAL_STRATEGY_TIME)
     calib->timevalues[calib->comm_rank] = current_time;
 
-
 #ifdef HAVE_EML
     if (calib->current_strategy & CAL_STRATEGY_ENERGY) {
-
         if (calib->energy->iteration_interval != 0 &&
                 calib->current_iteration > calib->energy->calibrate_until) {
             // There is no need to check ranges, as cal_mpi_free stops the
@@ -630,6 +633,7 @@ enum cal_error cal_mpi_start(struct cal_calibration* const calib) {
         }
     }
 #endif
+//    dbglog_info("  cal_mpi_start out\n");
 
     calib->started = 1;
     return CAL_SUCCESS;
