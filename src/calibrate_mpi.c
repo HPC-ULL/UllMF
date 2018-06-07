@@ -2,7 +2,6 @@
 #include "debug.h"
 #include <float.h>
 #include <math.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,8 +25,8 @@ struct cal_energy_strategy {
     double measurement_interval;
     double first_energy_calibration_time;
     size_t iteration_interval;
-    bool interval_calc_started;
-    bool calibrating;
+    int interval_calc_started;
+    int calibrating;
     size_t calibrate_until;
 
     double* values;
@@ -48,7 +47,7 @@ struct cal_energy_strategy {
 };
 
 struct cal_calibration {
-    MPI_Comm comm;
+    MPI_Comm comm; // @suppress("Type cannot be resolved")
     int comm_size;
     int comm_rank;
     int comm_root;
@@ -62,7 +61,7 @@ struct cal_calibration {
     double* timevalues;
 
     // Calibration
-    bool started;
+    int started;
     int* counts;
     int* displs;
     int work_blocksize;
@@ -93,11 +92,11 @@ static enum cal_strategy _select_strategy(struct cal_calibration* calib) {
 }
 
 // Determines if the movement is in range
-static bool _is_movement_legal(double current_ratio, double ratio_step,
+static int _is_movement_legal(double current_ratio, double ratio_step,
         Direction dir) {
     if (current_ratio + ratio_step * dir > 0)
-        return false;
-    return true;
+        return 0;
+    return 1;
 }
 
 static void _invert_ratios(double* ratios, double* current_ratios,
@@ -489,7 +488,7 @@ enum cal_error cal_mpi_shutdown(struct cal_calibration *calib) {
     //TODO free resources for running calibrations
 #ifdef HAVE_EML
     if (calib->energy->calibrating) {
-        calib->energy->calibrating = false;
+        calib->energy->calibrating = 0;
         size_t ndevices;
         emlDeviceGetCount(&ndevices);
         emlData_t* data[ndevices];
@@ -570,9 +569,9 @@ enum cal_error cal_mpi_setup(struct cal_calibration** const newcalib,
         calib->energy->last_direction = NONE;
         calib->energy->inverted = 0;
         calib->energy->ratio_step = 1 / (double) (calib->comm_size * 2);
-        calib->energy->calibrating = false;
+        calib->energy->calibrating = 0;
         calib->energy->calibrate_until = 0;
-        calib->energy->interval_calc_started = false;
+        calib->energy->interval_calc_started = 0;
 
         calib->energy->total_it = total_it;
         calib->energy->restart_step = restart_step;
@@ -620,19 +619,19 @@ enum cal_error cal_mpi_start(struct cal_calibration* const calib) {
             // calibration when the last iteration is reached
             calib->energy->calibrate_until = calib->current_iteration + calib->energy->iteration_interval;
 //            dbglog_info("Starting Energy Calibration (rank %d) until %zu\n", calib->comm_rank, calib->energy->calibrate_until);
-            calib->energy->calibrating = true;
+            calib->energy->calibrating = 1;
             emlError_t err = emlStart();
             assert(err == EML_SUCCESS);
         } else {
             if (!calib->energy->interval_calc_started) {
-                calib->energy->interval_calc_started = true;
+                calib->energy->interval_calc_started = 1;
                 calib->energy->first_energy_calibration_time = calib->timevalues[calib->comm_rank];
             }
         }
     }
 #endif
 
-    calib->started = true;
+    calib->started = 1;
     return CAL_SUCCESS;
 }
 
@@ -682,7 +681,7 @@ enum cal_error cal_mpi_stop(struct cal_calibration* const calib,
 
             err = emlDataFree(*data);
             assert(err == EML_SUCCESS);
-            calib->energy->calibrating = false;
+            calib->energy->calibrating = 0;
         } else {
             if (INTERVAL_ITERATIONS == calib->current_iteration) {
                 double total_time = MPI_Wtime() - calib->energy->first_energy_calibration_time;
@@ -706,6 +705,6 @@ enum cal_error cal_mpi_stop(struct cal_calibration* const calib,
     memcpy(counts, calib->counts, sizeof(*counts) * calib->comm_size);
     memcpy(displs, calib->displs, sizeof(*displs) * calib->comm_size);
 
-    calib->started = false;
+    calib->started = 0;
     return CAL_SUCCESS;
 }

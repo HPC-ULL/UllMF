@@ -38,7 +38,7 @@ enum cal_error cal_mpi_setup(
 		const double measurement_interval,
 		const double threshold,
 		const int root,
-		const MPI_Comm comm);
+		const MPI_Comm comm); // @suppress("Type cannot be resolved")
 enum cal_error cal_mpi_free(cal_calibration_t* calib);
 
 enum cal_error cal_mpi_start(cal_calibration_t* calib);

@@ -1,5 +1,5 @@
-#ifndef CAL_DEBUG_H
-#define CAL_DEBUG_H
+#ifndef ULLMF_DEBUG_H
+#define ULLMF_DEBUG_H
 
 #ifdef DEBUG
 
@@ -21,4 +21,4 @@
 #define dbglog_info(...)  DBGLOG("INFO", __VA_ARGS__, '\0')
 #define dbglog_append(...) DBGLOG2(__VA_ARGS__, '\0')
 
-#endif //EML_DEBUG_H
+#endif //ULLMF_DEBUG_H

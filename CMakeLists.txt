@@ -15,6 +15,16 @@ add_library(ullmf SHARED
   src/calibrate_mpi.c  
 )
 
+find_library(EML eml)
+if (EML)
+  add_definitions(-DHAVE_EML)
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+  add_definitions(-DDEBUG)
+endif()
+
+
 set_target_properties(ullmf PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
