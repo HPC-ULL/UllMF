@@ -12,6 +12,7 @@
 #define ULLMF_MEASUREMENT_DEVICE_H
 
 #include <stdlib.h>
+#include "ullmf_class_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +27,8 @@ enum ullmf_measurement_error {
 
 /** Contains state, properties and methods for a device type */
 struct measurement_device {
-    /** Device Name */
-    const char* _class;
+    /** Object inheritance */
+    struct class_t _class;
 
     /** Whether the device is initialized.
      *
@@ -52,7 +53,7 @@ struct measurement_device {
      *
      * @retval ULLMF_MEASUREMENT_SUCCESS The measurement was initialized
      */
-    enum ullmf_measurement_error (*init)(void* self, int id);
+    enum ullmf_measurement_error (*init)(void* self);
 
     /**
      * Shuts down the measurement_device\

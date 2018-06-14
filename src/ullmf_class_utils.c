@@ -10,11 +10,14 @@
  */
 
 #include "ullmf_class_utils.h"
+#include "ullmf_measurement_device.h"
+#include <string.h>
+
+
 
 enum ullmf_class_error class_typecheck(void* self, const char * classname) {
-    struct measurement_device * self_md = (struct measurement_device *) self;
-    printf("TYPECHECK %s", self_md->_class);
-    if (strcmp(self_md->_class, classname))
-        return ULLMF_CLASS_WRONG_CLASS;
+    struct class_t self_cl = *((struct class_t *) self);
+    if (strcmp(self_cl.name, classname))
+        return ULLMF_CLASS_WRONG_NAME;
     return ULLMF_CLASS_SUCCESS;
 }

@@ -1,14 +1,13 @@
-#add_library(ullmf SHARED calibrate_mpi.c)
-file(GLOB sources timer.c ullmf_measurement_device_dummy.c ullmf_class_utils.c)
 add_library(ullmf SHARED ${sources})
-#target_sources(ullmf PRIVATE ullmf_measurement_device_dummy.c)
-#target_sources(ullmf PRIVATE ullmf_class_utils.c)
 
+if (EML)
+  #  target_link_libraries(ullmf eml confuse) 
+endif(EML)
 
-#if (EML)
-#  add_definitions(-DHAVE_EML)
-#  target_link_libraries(ullmf eml confuse) 
-#endif()
+find_package(MPI)
+if (MPI_FOUND)
+  target_link_libraries(ullmf ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   add_definitions(-DDEBUG)

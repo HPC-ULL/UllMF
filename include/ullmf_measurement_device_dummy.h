@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#define dummy_class "dummy"
+#define ullmf_dummy_class "dummy"
 
 /** Contains state, properties and methods for a dummy device */
 struct measurement_device_dummy {

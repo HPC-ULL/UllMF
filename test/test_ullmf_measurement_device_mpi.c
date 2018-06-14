@@ -10,10 +10,11 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_measurement_device_dummy.h"
+#include "ullmf_measurement_device_mpi.h"
 #include "ullmf_measurement_device.h"
+#include <unistd.h>
 
-extern struct measurement_device_dummy dummy_device;
+extern struct measurement_device_mpi mpi_device;
 enum ullmf_measurement_error error_code;
 
 
@@ -30,32 +31,33 @@ int clean_suite1(void)
 
 void test_init(void)
 {
-    error_code = dummy_device.parent.init(&dummy_device);
-    CU_ASSERT_EQUAL(dummy_device.id, 0);
-    CU_ASSERT_DOUBLE_EQUAL(dummy_device.parent.measurement, 0, 0.005);
+    error_code = mpi_device.parent.init(&mpi_device);
+    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 0, 0.005);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 }
 
 void test_shutdown(void)
 {
-    dummy_device.parent.shutdown(&dummy_device);
+    mpi_device.parent.shutdown(&mpi_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     CU_PASS("Shutdown ok");
 }
 
 void test_measurement_start(void)
 {
-    dummy_device.parent.measurement_start(&dummy_device);
-    CU_ASSERT_NOT_EQUAL(dummy_device.measurement_ll, 0);
+    mpi_device.parent.measurement_start(&mpi_device);
+    CU_ASSERT_DOUBLE_NOT_EQUAL(mpi_device.parent.measurement, 0, 0.00005);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 }
 
 void test_measurement_stop(void)
 {
-    dummy_device.parent.measurement_stop(&dummy_device);
+    sleep(1);
+    mpi_device.parent.measurement_stop(&mpi_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
-    CU_ASSERT_EQUAL(dummy_device.measurement_ll, 1);
-    CU_ASSERT_DOUBLE_NOT_EQUAL(dummy_device.parent.measurement, 0, 0.005);
+    CU_ASSERT(mpi_device.parent.measurement > 0);
+    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 1, 0.005);
+    CU_ASSERT_DOUBLE_NOT_EQUAL(mpi_device.parent.measurement, 0, 0.00005);
 }
 
 /* The main() function for setting up and running the tests.
@@ -71,14 +73,14 @@ int main()
       return CU_get_error();
 
    /* add a suite to the registry */
-   pSuite = CU_add_suite("suite_ullmf_measurement_device_dummy", init_suite1, clean_suite1);
+   pSuite = CU_add_suite("suite_ullmf_measurement_device_mpi", init_suite1, clean_suite1);
    if (NULL == pSuite) {
       CU_cleanup_registry();
       return CU_get_error();
    }
 
    /* add the tests to the suite */
-   /* NOTE - ORDER IS IMPORTANT - MUST TEST fread() AFTER fprintf() */
+   /* NOTE - ORDER IS IMPORTANT */
    if ((NULL == CU_add_test(pSuite, "test of dummy init()", test_init)) ||
        (NULL == CU_add_test(pSuite, "test of dummy shutdown()", test_shutdown)) ||
        (NULL == CU_add_test(pSuite, "test of dummy measurement_start()", test_measurement_start)) ||
