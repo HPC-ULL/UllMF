@@ -12,21 +12,16 @@
 #include "CUnit/Basic.h"
 #include "ullmf_measurement_device_dummy.h"
 
-extern measurement_device_dummy_t dummy_device;
+extern struct measurement_device_dummy dummy_device;
+static long long intern_measurement_ll;
 
-/* The suite initialization function.
- * Opens the temporary file used by the tests.
- * Returns zero on success, non-zero otherwise.
- */
+
 int init_suite1(void)
 {
    return 0;
 }
 
-/* The suite cleanup function.
- * Closes the temporary file used by the tests.
- * Returns zero on success, non-zero otherwise.
- */
+
 int clean_suite1(void)
 {
    return 0;
@@ -34,27 +29,32 @@ int clean_suite1(void)
 
 void test_init(void)
 {
-    dummy_device.mdevice->init(&dummy_device, 0);
+    dummy_device.parent.init(&dummy_device, 0);
+    CU_ASSERT_EQUAL(dummy_device.id, 0);
+    dummy_device.parent.init(&dummy_device, 1);
+    CU_ASSERT_EQUAL(dummy_device.id, 1);
+    CU_ASSERT_DOUBLE_EQUAL(dummy_device.parent.measurement, 0, 0.005);
 }
 
-/* Simple test of fread().
- * Reads the data previously written by testFPRINTF()
- * and checks whether the expected characters are present.
- * Must be run after testFPRINTF().
- */
 void test_shutdown(void)
 {
-    dummy_device.mdevice->shutdown(&dummy_device);
+    dummy_device.parent.shutdown(&dummy_device);
+    CU_PASS("Shutdown ok");
 }
 
 void test_measurement_start(void)
 {
-    dummy_device.mdevice->measurement_start(&dummy_device);
+    dummy_device.parent.measurement_start(&dummy_device);
+    CU_ASSERT_NOT_EQUAL(dummy_device.measurement_ll, 0);
+    intern_measurement_ll = dummy_device.measurement_ll;
 }
 
 void test_measurement_stop(void)
 {
-    dummy_device.mdevice->measurement_stop(&dummy_device);
+    dummy_device.parent.measurement_stop(&dummy_device);
+    CU_ASSERT(dummy_device.measurement_ll > 0);
+    CU_ASSERT_NOT_EQUAL(dummy_device.measurement_ll, intern_measurement_ll);
+    CU_ASSERT_DOUBLE_NOT_EQUAL(dummy_device.parent.measurement, 0, 0.005);
 }
 
 /* The main() function for setting up and running the tests.

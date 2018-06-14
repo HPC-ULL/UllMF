@@ -25,7 +25,7 @@ enum ullmf_measurement_error {
 };
 
 /** Contains state, properties and methods for a device type */
-typedef struct measurement_device {
+struct measurement_device {
     /** Device Name */
     const char* _class;
 
@@ -80,7 +80,7 @@ typedef struct measurement_device {
      * @retval ULLMF_MEASUREMENT_SUCCESS The measurement was stopped
      */
     enum ullmf_measurement_error (*measurement_stop)(void* self);
-} measurement_device_t;
+};
 
 #ifdef __cplusplus
 }

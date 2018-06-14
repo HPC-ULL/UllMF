@@ -8,31 +8,26 @@
  *
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
-#ifndef ULLMF_MEASUREMENT_DEVICE_DUMMY_H
-#define ULLMF_MEASUREMENT_DEVICE_DUMMY_H
 
-#include "ullmf_measurement_device.h"
+#ifndef ULLMF_CLASS_UTILS_H
+#define ULLMF_CLASS_UTILS_H
+
+#include "ullmf_class_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define dummy_class "dummy"
-
-/** Contains state, properties and methods for a dummy device */
-struct measurement_device_dummy {
-    struct measurement_device parent;
-
-    /** Measurement device specific measurement units
-     *
-     */
-    long long measurement_ll;
-
-    int id;
+enum ullmf_class_error {
+    ULLMF_CLASS_SUCCESS = 0,
+    ULLMF_CLASS_WRONG_CLASS
 };
+
+enum ullmf_class_error class_typecheck(void* self, const char * classname);
 
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif

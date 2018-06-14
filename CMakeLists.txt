@@ -11,29 +11,8 @@ include_directories (
   "${PROJECT_SOURCE_DIR}"/config
 )
 
-add_library(ullmf SHARED
-  src/calibrate_mpi.c  
-)
-
 find_library(EML eml)
-if (EML)
-  add_definitions(-DHAVE_EML)
-endif()
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-  add_definitions(-DDEBUG)
-endif()
+add_subdirectory(test)
+add_subdirectory(src)
 
-
-set_target_properties(ullmf PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1
-    PUBLIC_HEADER "api/ullmf.h")
-
-target_include_directories(ullmf PRIVATE include)
-target_include_directories(ullmf PRIVATE src)
-install(TARGETS ullmf 
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(FILES ${CMAKE_BINARY_DIR}/ullmf.pc
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
