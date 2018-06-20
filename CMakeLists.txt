@@ -11,14 +11,16 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/config")
 
 set(sources
-  timer.c
   ullmf_class_utils.c
+  ullmf_measurement_device.c
   ullmf_measurement_device_dummy.c
+  ullmf_strategy.c
+  ullmf_strategy_calibrate.c
 )
 
 find_library(EML eml)
 if (EML)
-  #  set(sources ${sources} ullmf_measurement_device_eml.c)
+  set(sources ${sources} ullmf_measurement_device_eml.c)
 endif(EML)
 find_package(MPI)
 

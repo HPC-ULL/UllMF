@@ -13,9 +13,7 @@
 #include "ullmf_measurement_device_dummy.h"
 #include "ullmf_measurement_device.h"
 
-extern struct measurement_device_dummy dummy_device;
-enum ullmf_measurement_error error_code;
-
+extern measurement_device_dummy_t dummy_device;
 
 int init_suite1(void)
 {
@@ -30,7 +28,7 @@ int clean_suite1(void)
 
 void test_init(void)
 {
-    error_code = dummy_device.parent.init(&dummy_device);
+    enum ullmf_measurement_error error_code = dummy_device.parent.init(&dummy_device);
     CU_ASSERT_EQUAL(dummy_device.id, 0);
     CU_ASSERT_DOUBLE_EQUAL(dummy_device.parent.measurement, 0, 0.005);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
@@ -38,21 +36,21 @@ void test_init(void)
 
 void test_shutdown(void)
 {
-    dummy_device.parent.shutdown(&dummy_device);
+    enum ullmf_measurement_error error_code = dummy_device.parent.shutdown(&dummy_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     CU_PASS("Shutdown ok");
 }
 
 void test_measurement_start(void)
 {
-    dummy_device.parent.measurement_start(&dummy_device);
+    enum ullmf_measurement_error error_code = dummy_device.parent.measurement_start(&dummy_device);
     CU_ASSERT_NOT_EQUAL(dummy_device.measurement_ll, 0);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 }
 
 void test_measurement_stop(void)
 {
-    dummy_device.parent.measurement_stop(&dummy_device);
+    enum ullmf_measurement_error error_code = dummy_device.parent.measurement_stop(&dummy_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     CU_ASSERT_EQUAL(dummy_device.measurement_ll, 1);
     CU_ASSERT_DOUBLE_NOT_EQUAL(dummy_device.parent.measurement, 0, 0.005);

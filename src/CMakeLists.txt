@@ -1,7 +1,7 @@
 add_library(ullmf SHARED ${sources})
 
 if (EML)
-  #  target_link_libraries(ullmf eml confuse) 
+  target_link_libraries(ullmf eml confuse) 
 endif(EML)
 
 find_package(MPI)

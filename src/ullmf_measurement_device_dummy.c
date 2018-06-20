@@ -47,15 +47,16 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     return ULLMF_MEASUREMENT_SUCCESS;
 }
 
-struct measurement_device_dummy dummy_device = {
+measurement_device_dummy_t dummy_device = {
         .parent._class.name = ullmf_dummy_class,
-        .parent.initialized = 0,
+        .parent.measuring = 0,
         .parent.measurement = .0,
         .parent.unit = "None",
         .parent.init = &init,
         .parent.shutdown = &shutdown,
         .parent.measurement_start = &measurement_start,
         .parent.measurement_stop = &measurement_stop,
+        .parent.get_measurement = &measurement_device_get_measurement,
         .measurement_ll = 0,
         .id = 0,
 };

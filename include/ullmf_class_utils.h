@@ -12,8 +12,6 @@
 #ifndef ULLMF_CLASS_UTILS_H
 #define ULLMF_CLASS_UTILS_H
 
-#include "ullmf_class_utils.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,7 +21,9 @@ enum ullmf_class_error {
     ULLMF_CLASS_WRONG_NAME
 };
 
-struct class_t {
+typedef struct class_st class_t;
+
+struct class_st {
     const char * name;
 };
 

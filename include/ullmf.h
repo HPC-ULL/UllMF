@@ -1,8 +1,21 @@
+/*
+ * Copyright (c) 2018 Universidad de La Laguna <cap@pcg.ull.es>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * File: ullmf_strategy_calibrate.c
+ * Date: 15 jun. 2018
+ * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
+ */
 #ifndef ULLMF_H
 #define ULLMF_H
 
 #include <mpi.h>
 #include "ullmf_strategy.h"
+#include "ullmf_calibration.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,20 +29,17 @@ enum ullmf_error {
     ULLMF_UNSUPPORTED,
 };
 
-typedef struct ullmf_calibration ullmf_calibration_t;
-
 enum ullmf_error ullmf_mpi_init();
-enum ullmf_error ullmf_mpi_shutdown(struct cal_calibration *calib);
+enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t* calib);
 
 enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t* calib,
         const int* const counts, const int* const displs,
-        const enum ullmf_strategy_t* strategy, const int root,
+        const ullmf_strategy_t* strategy, const int root,
         const MPI_Comm comm);
 enum ullmf_error ullmf_mpi_free(ullmf_calibration_t* calib);
 
 enum ullmf_error ullmf_mpi_start(ullmf_calibration_t* calib);
-enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t* calib, int* counts,
-        int* displs);
+enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t* calib, int* counts, int* displs);
 
 #ifdef __cplusplus
 }

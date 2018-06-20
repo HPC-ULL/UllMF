@@ -19,9 +19,11 @@ extern "C" {
 
 #define ullmf_dummy_class "dummy"
 
+typedef struct measurement_device_dummy measurement_device_dummy_t;
+
 /** Contains state, properties and methods for a dummy device */
 struct measurement_device_dummy {
-    struct measurement_device parent;
+    measurement_device_t parent;
 
     /** Measurement device specific measurement units
      *

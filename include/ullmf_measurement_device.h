@@ -12,6 +12,7 @@
 #define ULLMF_MEASUREMENT_DEVICE_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "ullmf_class_utils.h"
 
 #ifdef __cplusplus
@@ -22,19 +23,22 @@ enum ullmf_measurement_error {
     ULLMF_MEASUREMENT_SUCCESS = 0,
     ULLMF_MEASUREMENT_STARTED,
     ULLMF_MEASUREMENT_NOT_STARTED,
-    ULLMF_MEASUREMENT_WRONG_CLASS
+    ULLMF_MEASUREMENT_WRONG_CLASS,
+    ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR
 };
+
+typedef struct measurement_device measurement_device_t;
 
 /** Contains state, properties and methods for a device type */
 struct measurement_device {
     /** Object inheritance */
-    struct class_t _class;
+    class_t _class;
 
-    /** Whether the device is initialized.
+    /** Whether the device is measuring.
      *
-     * 1 if it is initialized, 0 if it is not.
+     * 1 if it is measuring, 0 if it is not.
      */
-    int initialized;
+    bool measuring;
 
     /** Last measurement taken.
      */
@@ -46,6 +50,7 @@ struct measurement_device {
     const char* unit;
 
     // TODO Change to variable number of arguments to allow initialization of children
+    // It is not needed right now with the implemented measurement devices
     /**
      * Initializes the measurement_device.
      *
@@ -81,7 +86,16 @@ struct measurement_device {
      * @retval ULLMF_MEASUREMENT_SUCCESS The measurement was stopped
      */
     enum ullmf_measurement_error (*measurement_stop)(void* self);
+
+    /**
+     * Returns the last measurement taken
+     *
+     * @retval double_value The last measurement taken
+     */
+    double (*get_measurement) (void* self);
 };
+
+double measurement_device_get_measurement(void* self);
 
 #ifdef __cplusplus
 }
