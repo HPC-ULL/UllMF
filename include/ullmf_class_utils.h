@@ -9,8 +9,11 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#ifndef ULLMF_CLASS_UTILS_H
-#define ULLMF_CLASS_UTILS_H
+#ifndef ULLMF_CLASS_H
+#define ULLMF_CLASS_H
+
+#include <stdlib.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,10 +27,17 @@ enum ullmf_class_error {
 typedef struct class_st class_t;
 
 struct class_st {
-    const char * name;
+    size_t size;
+    const char* name;
+    void * (* constructor) (void * _class, va_list* args);
+    void * (* destructor) (void * _class);
 };
 
-enum ullmf_class_error class_typecheck(void* self, const char * classname);
+enum ullmf_class_error class_typecheck(void * self, const char * classname);
+
+void * _new(const void * _class, ...);
+void * _delete(void * _class);
+
 
 #ifdef __cplusplus
 }

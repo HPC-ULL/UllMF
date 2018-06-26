@@ -24,6 +24,11 @@ typedef struct ullmf_strategy ullmf_strategy_t;
 extern "C" {
 #endif
 
+enum ullmf_tag {
+	ULLMF_TAG_CALIBRATED = 0,
+	ULLMF_TAG_RECALIBRATING
+};
+
 /** Contains state, properties and methods for an strategy */
 struct ullmf_strategy {
     /** Object inheritance */
@@ -33,7 +38,7 @@ struct ullmf_strategy {
     measurement_device_t* mdevice;
 
     /** Main Calibration Procedure */
-    void (*calibrate)(ullmf_calibration_t* calib);
+    int (*calibrate)(ullmf_calibration_t* calib);
 
     /** Redistribution procedure */
     void (*redistribute)(ullmf_calibration_t* calib);

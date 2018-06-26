@@ -31,7 +31,7 @@ int clean_suite1(void)
 void test_init(void)
 {
     enum ullmf_measurement_error error_code = mpi_device.parent.init(&mpi_device);
-    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 0, 0.005);
+    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 0, 0.01);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 }
 
@@ -45,7 +45,7 @@ void test_shutdown(void)
 void test_measurement_start(void)
 {
     enum ullmf_measurement_error error_code = mpi_device.parent.measurement_start(&mpi_device);
-    CU_ASSERT_DOUBLE_NOT_EQUAL(mpi_device.parent.measurement, 0, 0.00005);
+    CU_ASSERT_DOUBLE_NOT_EQUAL(mpi_device.parent.measurement, 0, 0.01);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     error_code = mpi_device.parent.measurement_start(&mpi_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
@@ -57,7 +57,7 @@ void test_measurement_stop(void)
     enum ullmf_measurement_error error_code = mpi_device.parent.measurement_stop(&mpi_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     CU_ASSERT(mpi_device.parent.measurement > 0);
-    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 1, 0.005);
+    CU_ASSERT_DOUBLE_EQUAL(mpi_device.parent.measurement, 1, 0.01);
     error_code = mpi_device.parent.measurement_stop(&mpi_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_NOT_STARTED);
 }

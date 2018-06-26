@@ -16,6 +16,8 @@ set(sources
   ullmf_measurement_device_dummy.c
   ullmf_strategy.c
   ullmf_strategy_calibrate.c
+  ullmf_workload.c
+  ullmf.c
 )
 
 find_library(EML eml)

@@ -12,7 +12,9 @@
 #define ULLMF_MEASUREMENT_DEVICE_EML_H
 
 #include "ullmf_measurement_device.h"
+#include <stdbool.h>
 #include <eml.h>
+#include <mpi.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +36,20 @@ struct measurement_device_eml {
     const char * device;
 
     size_t ndevices;
+
+    bool interval_calc_started;
+
+    size_t measurement_interval;
+
+    unsigned long long measurement_time_interval;
+
+    size_t current_it;
+
+    unsigned long long first_calibration_t;
+
+    size_t internal_calibration_interval;
+
+    MPI_Comm eml_comm;
 };
 
 #ifdef __cplusplus

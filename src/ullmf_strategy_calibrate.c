@@ -11,18 +11,20 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
+#include "ullmf_strategy.h"
 #include "ullmf_strategy_calibrate.h"
 #include "ullmf_measurement_device.h"
 #include "ullmf_measurement_device_mpi.h"
 
 extern measurement_device_mpi_t mpi_device;
 
-static void calibrate(struct ullmf_calibration* calib) {
-
+static int calibrate(ullmf_calibration_t* calib) {
+    return (int) ULLMF_TAG_CALIBRATED;
 }
 
 ullmf_strategy_calibrate_t strategy_calibrate = {
-    .parent._class = ullmf_strategy_calibrate_class,
+    .parent._class.size = sizeof(ullmf_strategy_calibrate_t),
+    .parent._class.name = ullmf_strategy_calibrate_class,
     .parent.mdevice = (measurement_device_t *) &mpi_device,
     .parent.calibrate = &calibrate,
     .parent.redistribute = &ullmf_strategy_redistribute,

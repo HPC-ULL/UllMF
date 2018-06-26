@@ -12,22 +12,50 @@
  */
 
 #include <mpi.h>
+#include <string.h>
+#include <assert.h>
 
 #include "ullmf.h"
 #include "ullmf_calibration.h"
+#include "ullmf_workload.h"
+#include "ullmf_class_utils.h"
 
-enum ullmf_error ullmf_mpi_init() {
+static void calibrate(ullmf_calibration_t * calib) {
+    MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
+               calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
+
+    // TODO Optimize
+    if (calib->id == calib->root) {
+        const int tag = calib->strategy->calibrate(calib);
+        for (int i = 0; i < calib->num_procs; i++)
+            MPI_Send(NULL, 0, MPI_BYTE, i, tag, calib->comm);
+    }
+
+    MPI_Status status;
+    MPI_Recv(NULL, 0, MPI_BYTE, calib->root, MPI_ANY_TAG, calib->comm, &status);
+
+    if (status.MPI_TAG == ULLMF_TAG_RECALIBRATING) {
+        MPI_Bcast(calib->workload->counts, calib->num_procs, MPI_INT, calib->root, calib->comm);
+        MPI_Bcast(calib->workload->displs, calib->num_procs, MPI_INT, calib->root, calib->comm);
+    } else {
+        assert(status.MPI_TAG == ULLMF_TAG_CALIBRATED);
+    }
+}
+
+enum ullmf_error ullmf_mpi_init(ullmf_calibration_t * const calib) {
+	calib->strategy->mdevice->init(calib->strategy->mdevice);
     return ULLMF_SUCCESS;
 }
 
-enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t* const calib) {
+enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t * const calib) {
+	calib->strategy->mdevice->shutdown(calib->strategy->mdevice);
     return ULLMF_SUCCESS;
 }
 
-enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t** const new_calib,
-        const int* const counts,
-        const int* const displs,
-        const ullmf_strategy_t* strategy,
+enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
+        const int * const counts,
+        const int * const displs,
+        ullmf_strategy_t * const strategy,
         const int root,
         const MPI_Comm comm) {
 
@@ -37,38 +65,37 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t** const new_calib,
     calib->comm = comm;
     calib->root = root;
     calib->strategy = strategy;
-
-    size_t memsize = sizeof(*calib->counts) * calib->num_procs;
-    calib->counts = malloc(memsize);
-    memcpy(calib->counts, counts, memsize);
-
-    memsize = sizeof(*calib->displs) * calib->num_procs;
-    calib->displs = malloc(memsize);
-    memcpy(calib->displs, displs, memsize);
-
-    calib->workload_size = displs[calib->num_procs - 1] + counts[calib->num_procs - 1];
-
+    calib->workload = _new(Workload, counts, displs, calib->num_procs);
     calib->measurements = malloc(calib->num_procs * sizeof(double));
     *new_calib = calib;
     return ULLMF_SUCCESS;
 }
 
-enum ullmf_error ullmf_mpi_free(ullmf_calibration_t* const calib) {
-    free(calib->counts);
-    free(calib->displs);
+enum ullmf_error ullmf_mpi_free(ullmf_calibration_t * const calib) {
+    _delete(calib->workload);
     free(calib->measurements);
     return ULLMF_SUCCESS;
 }
 
-enum ullmf_error ullmf_mpi_start(ullmf_calibration_t* const calib) {
+enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
     if (calib->started)
         return ULLMF_ALREADY_STARTED;
-
-    calib->strategy->mdevice->measurement_start();
+    calib->started = true;
+    calib->strategy->mdevice->measurement_start(calib->strategy->mdevice);
     return ULLMF_SUCCESS;
 }
 
-enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t* const calib, int* counts, int* displs){
+enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
+    if (!calib->started)
+        return ULLMF_NOT_STARTED;
+    calib->strategy->mdevice->measurement_stop(calib->strategy->mdevice);
+    calib->workload->set_workload(calib->workload, counts, displs);
+
+    calibrate(calib);
+
+    memcpy(counts, calib->workload->counts, sizeof(*counts) * calib->num_procs);
+    memcpy(displs, calib->workload->displs, sizeof(*displs) * calib->num_procs);
+    calib->started = false;
     return ULLMF_SUCCESS;
 }
 

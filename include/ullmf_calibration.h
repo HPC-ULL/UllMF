@@ -21,6 +21,7 @@ typedef struct ullmf_calibration ullmf_calibration_t;
 
 #include "ullmf_class_utils.h"
 #include "ullmf_strategy.h"
+#include "ullmf_workload.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,16 +36,12 @@ struct ullmf_calibration {
 
     /** Calibration strategy */
     ullmf_strategy_t* strategy;
-
-    //workload
-    // TODO Comment
-    int * counts; // Amount of workload
-    int * displs; // Workload location
-    int workload_size; // Total workload
-    int num_procs; // Num processes
+    /** Current Workload */
+    ullmf_workload_t* workload;
 
     // calibration
     double * measurements; // Process last measurements
+    int num_procs; // Number of processes
     int id; // Process id
     int root; // Root process
     bool started;
