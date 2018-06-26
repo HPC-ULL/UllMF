@@ -24,10 +24,14 @@ typedef struct ullmf_strategy ullmf_strategy_t;
 extern "C" {
 #endif
 
+#define ullmf_strategy_class "ullmf_strategy"
+
 enum ullmf_tag {
 	ULLMF_TAG_CALIBRATED = 0,
 	ULLMF_TAG_RECALIBRATING
 };
+
+typedef struct ullmf_strategy ullmf_strategy_t;
 
 /** Contains state, properties and methods for an strategy */
 struct ullmf_strategy {
@@ -45,6 +49,8 @@ struct ullmf_strategy {
 };
 
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib);
+
+extern const void * Ullmf_strategy;
 
 #ifdef __cplusplus
 }

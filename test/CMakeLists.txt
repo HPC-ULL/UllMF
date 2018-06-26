@@ -10,11 +10,13 @@ endfunction(PREPEND)
 PREPEND(new_sources "../src" "${sources}")
 
 set(TEST_CASES
+  test_ullmf_class_utils
+  test_ullmf_distribution
   test_ullmf_measurement_device_dummy
   test_ullmf_measurement_device_mpi
   test_ullmf_measurement_device_eml
   test_ullmf_workload
-  test_ullmf_class_utils
+  
 )
 
 foreach(test_case ${TEST_CASES})

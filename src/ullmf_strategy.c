@@ -14,6 +14,17 @@
 #include "ullmf_strategy.h"
 #include "ullmf_calibration.h"
 
-void ullmf_strategy_redistribute(struct ullmf_calibration* calib) {
-  // TODO
+void ullmf_strategy_redistribute(ullmf_calibration_t* calib) {
+
 }
+
+
+static const class_t _Ullmf_strategy = {
+    .size = sizeof(ullmf_strategy_t),
+    .name = ullmf_strategy_class,
+    .constructor = 0,
+    .destructor = 0,
+};
+
+const void * Ullmf_strategy = &_Ullmf_strategy;
+

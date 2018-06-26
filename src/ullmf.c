@@ -21,9 +21,6 @@
 #include "ullmf_class_utils.h"
 
 static void calibrate(ullmf_calibration_t * calib) {
-    MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
-               calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
-
     // TODO Optimize
     if (calib->id == calib->root) {
         const int tag = calib->strategy->calibrate(calib);
@@ -88,8 +85,11 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
     if (!calib->started)
         return ULLMF_NOT_STARTED;
+
     calib->strategy->mdevice->measurement_stop(calib->strategy->mdevice);
     calib->workload->set_workload(calib->workload, counts, displs);
+    MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
+               calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
 
     calibrate(calib);
 

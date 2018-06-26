@@ -52,6 +52,8 @@ struct measurement_device_eml {
     MPI_Comm eml_comm;
 };
 
+extern measurement_device_eml_t ullmf_eml_device;
+
 #ifdef __cplusplus
 }
 #endif

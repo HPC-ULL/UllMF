@@ -30,8 +30,11 @@ typedef struct ullmf_strategy_calibrate ullmf_strategy_calibrate_t;
 /** Contains state, properties and methods for an strategy */
 struct ullmf_strategy_calibrate {
     ullmf_strategy_t parent;
+
+    double threshold;
 };
 
+extern ullmf_strategy_calibrate_t ullmf_strategy_calibrate;
 
 #ifdef __cplusplus
 }

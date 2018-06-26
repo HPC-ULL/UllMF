@@ -15,8 +15,6 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-extern measurement_device_eml_t eml_device;
-
 
 int init_suite1(void)
 {
@@ -32,16 +30,16 @@ int clean_suite1(void)
 
 void test_init(void)
 {
-    enum ullmf_measurement_error error_code = eml_device.parent.init(&eml_device);
-    CU_ASSERT_NOT_EQUAL(eml_device.ndevices, -1);
+    enum ullmf_measurement_error error_code = ullmf_eml_device.parent.init(&ullmf_eml_device);
+    CU_ASSERT_NOT_EQUAL(ullmf_eml_device.ndevices, -1);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 }
 
 
 void test_shutdown(void)
 {
-    enum ullmf_measurement_error error_code = eml_device.parent.shutdown(&eml_device);
-    CU_ASSERT_EQUAL(eml_device.ndevices, -1);
+    enum ullmf_measurement_error error_code = ullmf_eml_device.parent.shutdown(&ullmf_eml_device);
+    CU_ASSERT_EQUAL(ullmf_eml_device.ndevices, -1);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
 
 }
@@ -49,10 +47,10 @@ void test_shutdown(void)
 
 void test_measurement_start(void)
 {
-    enum ullmf_measurement_error error_code = eml_device.parent.measurement_start(&eml_device);
-    CU_ASSERT_EQUAL(eml_device.parent.measuring, true);
+    enum ullmf_measurement_error error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
-    error_code = eml_device.parent.measurement_start(&eml_device);
+    error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
 }
 
@@ -60,11 +58,11 @@ void test_measurement_start(void)
 void test_measurement_stop(void)
 {
     sleep(1);
-    enum ullmf_measurement_error error_code = eml_device.parent.measurement_stop(&eml_device);
-    CU_ASSERT(eml_device.parent.measurement >= 0);
-    CU_ASSERT_EQUAL(eml_device.parent.measuring, false);
+    enum ullmf_measurement_error error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+    CU_ASSERT(ullmf_eml_device.parent.measurement >= 0);
+    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
-    error_code = eml_device.parent.measurement_stop(&eml_device);
+    error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_NOT_STARTED);
 }
 

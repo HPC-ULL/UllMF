@@ -12,25 +12,26 @@ include_directories("${PROJECT_SOURCE_DIR}/config")
 
 set(sources
   ullmf_class_utils.c
+  ullmf_distribution.c
   ullmf_measurement_device.c
   ullmf_measurement_device_dummy.c
+  ullmf_measurement_device_mpi.c
   ullmf_strategy.c
   ullmf_strategy_calibrate.c
   ullmf_workload.c
   ullmf.c
 )
 
+find_package(MPI)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+
 find_library(EML eml)
 if (EML)
   set(sources ${sources} ullmf_measurement_device_eml.c)
 endif(EML)
-find_package(MPI)
 
-find_package(MPI)
-if (MPI_FOUND)
-  set(sources ${sources} ullmf_measurement_device_mpi.c)
-  include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-endif(MPI_FOUND)
+
+
 
 add_subdirectory(test)
 add_subdirectory(src)

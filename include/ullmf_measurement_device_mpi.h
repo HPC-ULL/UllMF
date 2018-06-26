@@ -26,6 +26,8 @@ struct measurement_device_mpi {
     measurement_device_t parent;
 };
 
+extern measurement_device_mpi_t mpi_device;
+
 #ifdef __cplusplus
 }
 #endif

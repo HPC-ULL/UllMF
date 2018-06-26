@@ -165,7 +165,7 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     return err;
 }
 
-measurement_device_eml_t eml_device = {
+measurement_device_eml_t ullmf_eml_device = {
         .parent._class.name = ullmf_eml_class,
         .parent.measuring = 0,
         .parent.measurement = .0,
