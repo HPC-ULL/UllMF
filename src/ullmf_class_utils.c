@@ -37,10 +37,10 @@ void* _new(const void* _class, ...) {
     return _object;
 }
 
-void* _delete(void* self) {
+void _delete(void* self) {
 	if (self) {
         const class_t** self_class = self;
     	self = (*self_class)->destructor(self);
 	}
-	return self;
+	free(self);
 }

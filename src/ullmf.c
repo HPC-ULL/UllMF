@@ -24,6 +24,8 @@ static void calibrate(ullmf_calibration_t * calib) {
     // TODO Optimize
     if (calib->id == calib->root) {
         const int tag = calib->strategy->calibrate(calib);
+        if (tag == ULLMF_TAG_RECALIBRATING)
+        	calib->strategy->redistribute(calib);
         for (int i = 0; i < calib->num_procs; i++)
             MPI_Send(NULL, 0, MPI_BYTE, i, tag, calib->comm);
     }

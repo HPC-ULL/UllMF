@@ -36,7 +36,7 @@ struct class_st {
 enum ullmf_class_error class_typecheck(void * self, const char * classname);
 
 void * _new(const void * _class, ...);
-void * _delete(void * _class);
+void _delete(void * _class);
 
 
 #ifdef __cplusplus

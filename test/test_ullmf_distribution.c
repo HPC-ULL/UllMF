@@ -16,9 +16,7 @@
 #include "ullmf_distribution.h"
 
 static ullmf_distribution_t* distribution1 = 0;
-static int num_procs = 4;
-static double ratios[4] = {0.25, 0.2, 0.25, 0.3};
-static double ratios2[4] = {0.2, 0.15, 0.35, 0.35};
+
 
 
 int init_suite1(void)
@@ -34,6 +32,8 @@ int clean_suite1(void)
 
 void test_constructor(void)
 {
+    int num_procs = 4;
+	double ratios[4] = {0.25, 0.2, 0.25, 0.3};
 	distribution1 = _new(Distribution, num_procs, ratios);
 	CU_ASSERT_NOT_EQUAL(distribution1, 0);
 	CU_ASSERT_EQUAL(distribution1->_class, Distribution);
@@ -51,6 +51,8 @@ void test_constructor(void)
 
 void test_set_ratios(void)
 {
+    int num_procs = 4;
+	double ratios2[4] = {0.2, 0.15, 0.35, 0.35};
 	distribution1->set_ratios(distribution1, num_procs, ratios2);
     double total = 0;
 	for (int i = 0; i < distribution1->num_procs; i++) {
@@ -68,6 +70,34 @@ void test_get_num_procs(void)
 void test_get_total(void)
 {
 	CU_ASSERT_DOUBLE_EQUAL(distribution1->get_total(distribution1), distribution1->total, 0.005);
+}
+
+#include<stdio.h>
+void test_redistribute_remainder(void)
+{
+	double * old_ratios = distribution1->ratios;
+
+	double ratios3[4] = {0.2, 0.10, 0.38, 0.37};
+	distribution1->ratios = ratios3;
+	distribution1->excess = 5;
+	distribution1->redistribute_remainder(distribution1);
+
+	CU_ASSERT_DOUBLE_EQUAL(0.19, distribution1->ratios[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.08, distribution1->ratios[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.37, distribution1->ratios[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.36, distribution1->ratios[3], 0.005);
+
+	double ratios4[4] = {0.10, 0.15, 0.36, 0.34};
+	distribution1->ratios = ratios4;
+	distribution1->excess = -5;
+	distribution1->redistribute_remainder(distribution1);
+	CU_ASSERT_DOUBLE_EQUAL(0.11, distribution1->ratios[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.16, distribution1->ratios[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.38, distribution1->ratios[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.35, distribution1->ratios[3], 0.005);
+
+	distribution1->ratios = old_ratios;
+	old_ratios = 0;
 }
 
 void test_destructor(void)
@@ -103,6 +133,7 @@ int main()
 	   (NULL == CU_add_test(pSuite, "test of distribution set_ratios()", test_set_ratios)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution get_num_procs()", test_get_num_procs)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution get_total()", test_get_total)) ||
+	   (NULL == CU_add_test(pSuite, "test of distribution redistribute_remainder()", test_redistribute_remainder)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution destructor()", test_destructor))
       )
    {

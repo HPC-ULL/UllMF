@@ -11,6 +11,7 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
+#include "ullmf_distribution.h"
 #include "ullmf_strategy.h"
 #include "ullmf_strategy_calibrate.h"
 #include "ullmf_measurement_device.h"
@@ -37,25 +38,27 @@ static void calculate_totals(ullmf_calibration_t* calib, double * total_time, do
 	}
 }
 
-static double * get_current_ratios(ullmf_calibration_t* calib) {
-	double * to_return = calloc(calib->num_procs, sizeof(double));
+static ullmf_distribution_t * get_current_ratios(ullmf_calibration_t* calib) {
+	double * ratios = calloc(calib->num_procs, sizeof(double));
 	dbglog_info("        time ratios: ");
 	double time_ratio_sum = 0;
 	for (int i = 0; i < calib->num_procs; i++) {
 		if (calib->measurements[i] == 0)
-			to_return[i] = 0;
+			ratios[i] = 0;
 		else
-			to_return[i] = calib->workload->counts[i] / calib->measurements[i];
+			ratios[i] = calib->workload->counts[i] / calib->measurements[i];
 		dbglog_append(DBG_FMT " ", to_return[i]);
-		time_ratio_sum += to_return[i];
+		time_ratio_sum += ratios[i];
 	}
 	dbglog_append("\n");
 	if (time_ratio_sum != 1) {
 	    for (int i = 0; i < calib->num_procs; i++) {
-	    	to_return[i] = to_return[i] / time_ratio_sum;
+	    	ratios[i] = ratios[i] / time_ratio_sum;
 	    }
 	}
-	return to_return;
+	ullmf_distribution_t * to_ret = _new(Distribution, calib->num_procs, ratios);
+	free(ratios);
+	return to_ret;
 }
 
 static int calibrate(ullmf_calibration_t* calib) {
@@ -75,15 +78,10 @@ static int calibrate(ullmf_calibration_t* calib) {
 	}
 	dbglog_append("(%zu)\n", calib->workload->size);
 
-	ullmf_distribution_t * ratios = get_current_ratios(calib);
+	if (calib->strategy->best_candidate != 0)
+		_delete(calib->strategy->best_candidate);
+	calib->strategy->best_candidate = get_current_ratios(calib);
 
-//	double ratio_sum = 0;
-//    for (int i = 0; i < calib->num_procs; i++) {
-//        ratios[i] = ratios[i] / time_ratio_sum;
-//        ratio_sum += ratios[i];
-//    }
-
-	free(ratios);
     return ULLMF_TAG_RECALIBRATING;
 }
 
@@ -93,5 +91,7 @@ ullmf_strategy_calibrate_t ullmf_strategy_calibrate = {
     .parent.mdevice = (measurement_device_t *) &mpi_device,
     .parent.calibrate = &calibrate,
     .parent.redistribute = &ullmf_strategy_redistribute,
+	.parent.best_candidate = 0,
 	.threshold = 0.05,
+
 };

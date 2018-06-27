@@ -14,10 +14,11 @@
 #ifndef ULLMF_STRATEGY_H
 #define ULLMF_STRATEGY_H
 
-typedef struct ullmf_strategy ullmf_strategy_t;
+typedef struct ullmf_strategy ullmf_strategy_t; // Don't move this line. It avoids a circular inclusion
 
 #include "ullmf_class_utils.h"
 #include "ullmf_calibration.h"
+#include "ullmf_distribution.h"
 #include "ullmf_measurement_device.h"
 
 #ifdef __cplusplus
@@ -30,8 +31,6 @@ enum ullmf_tag {
 	ULLMF_TAG_CALIBRATED = 0,
 	ULLMF_TAG_RECALIBRATING
 };
-
-typedef struct ullmf_strategy ullmf_strategy_t;
 
 /** Contains state, properties and methods for an strategy */
 struct ullmf_strategy {
@@ -46,6 +45,8 @@ struct ullmf_strategy {
 
     /** Redistribution procedure */
     void (*redistribute)(ullmf_calibration_t* calib);
+
+    ullmf_distribution_t* best_candidate;
 };
 
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib);
