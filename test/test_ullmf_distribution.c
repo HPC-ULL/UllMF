@@ -51,9 +51,8 @@ void test_constructor(void)
 
 void test_set_ratios(void)
 {
-    int num_procs = 4;
 	double ratios2[4] = {0.2, 0.15, 0.35, 0.35};
-	distribution1->set_ratios(distribution1, num_procs, ratios2);
+	distribution1->set_ratios(distribution1, ratios2);
     double total = 0;
 	for (int i = 0; i < distribution1->num_procs; i++) {
 		CU_ASSERT_DOUBLE_EQUAL(ratios2[i], distribution1->ratios[i], 0.005);

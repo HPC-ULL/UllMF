@@ -34,8 +34,11 @@ enum ullmf_error ullmf_mpi_init();
 enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t* calib);
 
 enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t** const new_calib,
-        const int* const counts, const int* const displs,
-        ullmf_strategy_t* const strategy, const int root,
+        const int* const counts,
+		const int* const displs,
+		const int blocksize,
+        ullmf_strategy_t* const strategy,
+		const int root,
         const MPI_Comm comm);
 enum ullmf_error ullmf_mpi_free(ullmf_calibration_t* calib);
 

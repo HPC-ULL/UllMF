@@ -44,7 +44,7 @@ void test_constructor(void)
 {
 	workload1 = calloc(1, ((class_t*) Workload)->size);
 	workload1->_class = Workload;
-	workload1 = create_obj(workload1, counts, displs, num_procs, blocksize);
+	workload1 = create_obj(workload1, num_procs, counts, displs, blocksize);
 	CU_ASSERT_NOT_EQUAL(workload1, 0);
 	CU_ASSERT_EQUAL(workload1->_class, Workload);
 	CU_ASSERT_STRING_EQUAL(((class_t*) workload1->_class)->name, ((class_t*) Workload)->name);

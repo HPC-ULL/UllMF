@@ -28,7 +28,7 @@ struct ullmf_distribution {
     double total; // Workload total (to check if sum(ratios) == 1
     int excess;
 
-    void (* set_ratios)(ullmf_distribution_t * self, const int num_procs, const double * const ratios);
+    void (* set_ratios)(ullmf_distribution_t * self, const double * const ratios);
     int (* get_num_procs)(ullmf_distribution_t * self);
     double (* get_total)(ullmf_distribution_t * self);
     void (* redistribute_remainder)(ullmf_distribution_t * self);

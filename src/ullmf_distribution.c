@@ -19,8 +19,7 @@
 #include "ullmf_distribution.h"
 #include "ullmf_class_utils.h"
 
-static void set_ratios(ullmf_distribution_t * self, const int num_procs, const double * const ratios) {
-	self->num_procs = num_procs;
+static void set_ratios(ullmf_distribution_t * self, const double * const ratios) {
 	size_t memsize = self->num_procs * sizeof(self->ratios);
 	memcpy(self->ratios, ratios, memsize);
     self->total = 0;

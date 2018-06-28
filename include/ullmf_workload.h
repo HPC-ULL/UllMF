@@ -23,11 +23,11 @@ typedef struct ullmf_workload ullmf_workload_t;
 
 struct ullmf_workload {
     const void * _class;
+    int num_procs; // Num processes
     int * counts; // Amount of workload
     int * displs; // Workload location
     int size; // Total workload
     int blocksize; // Minimum amount of work
-    int num_procs; // Num processes
 
     void (* set_workload)(ullmf_workload_t* self, const int * const counts, const int * const displs);
     void (* set_blocksize)(ullmf_workload_t* self, const int block_size);

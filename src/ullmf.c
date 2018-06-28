@@ -54,6 +54,7 @@ enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t * const calib) {
 enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
         const int * const counts,
         const int * const displs,
+		const int blocksize,
         ullmf_strategy_t * const strategy,
         const int root,
         const MPI_Comm comm) {
@@ -64,7 +65,7 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
     calib->comm = comm;
     calib->root = root;
     calib->strategy = strategy;
-    calib->workload = _new(Workload, counts, displs, calib->num_procs);
+    calib->workload = _new(Workload, calib->num_procs, counts, displs, blocksize);
     calib->measurements = malloc(calib->num_procs * sizeof(double));
     *new_calib = calib;
     return ULLMF_SUCCESS;

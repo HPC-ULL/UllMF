@@ -15,8 +15,8 @@ set(TEST_CASES
   test_ullmf_measurement_device_dummy
   test_ullmf_measurement_device_mpi
   test_ullmf_measurement_device_eml
+  test_ullmf_strategy
   test_ullmf_workload
-  
 )
 
 foreach(test_case ${TEST_CASES})

@@ -17,6 +17,7 @@ static ullmf_workload_t* workload1;
 static int counts[2] = {2, 2};
 static int displs[2] = {0, 2};
 static int num_procs = 2;
+static int blocksize = 1;
 
 int init_suite1(void)
 {
@@ -31,7 +32,7 @@ int clean_suite1(void)
 
 void test_new(void)
 {
-	workload1 = _new(Workload, counts, displs, num_procs);
+	workload1 = _new(Workload, num_procs, counts, displs, blocksize);
 	CU_ASSERT_NOT_EQUAL(workload1, 0);
 	CU_ASSERT_EQUAL(workload1->_class, Workload);
 

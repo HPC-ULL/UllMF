@@ -31,10 +31,9 @@ static void set_blocksize(ullmf_workload_t* self, const int block_size) {
 static void * ullmf_workload_t_constructor(void * self, va_list * args) {
     ullmf_workload_t* _self = self;
 
+    _self->num_procs = va_arg(*args, int);
     int * counts = va_arg(*args, int *);
     int * displs = va_arg(*args, int *);
-
-    _self->num_procs = va_arg(*args, int);
 
     size_t memsize = sizeof(_self->counts) * _self->num_procs;
     _self->counts = malloc(memsize);
