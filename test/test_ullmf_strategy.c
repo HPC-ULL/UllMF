@@ -29,7 +29,6 @@ int clean_suite1(void)
    return 0;
 }
 
-#include<stdio.h>
 void test_redistribute(void)
 {
 	int counts[4] = {5000, 5000, 5000, 5000};

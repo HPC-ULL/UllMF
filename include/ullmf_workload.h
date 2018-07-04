@@ -35,6 +35,8 @@ struct ullmf_workload {
 
 extern const void * Workload;
 
+// costructor(int num_procs, int * counts, int * displs, int blocksize)
+
 #ifdef __cplusplus
 }
 #endif

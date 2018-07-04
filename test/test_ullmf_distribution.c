@@ -71,7 +71,6 @@ void test_get_total(void)
 	CU_ASSERT_DOUBLE_EQUAL(distribution1->get_total(distribution1), distribution1->total, 0.005);
 }
 
-#include<stdio.h>
 void test_redistribute_remainder(void)
 {
 	double * old_ratios = distribution1->ratios;

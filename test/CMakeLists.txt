@@ -16,6 +16,7 @@ set(TEST_CASES
   test_ullmf_measurement_device_mpi
   test_ullmf_measurement_device_eml
   test_ullmf_strategy
+  test_ullmf_strategy_calibrate
   test_ullmf_workload
 )
 

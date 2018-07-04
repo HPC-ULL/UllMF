@@ -34,7 +34,7 @@ struct ullmf_strategy_calibrate {
     double threshold;
 };
 
-extern ullmf_strategy_calibrate_t ullmf_strategy_calibrate;
+extern ullmf_strategy_t * ullmf_strategy_calibrate;
 
 #ifdef __cplusplus
 }

@@ -10,10 +10,10 @@
  * Date: 26 jun. 2018
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
-#ifndef ULLMF_CANDIDATE_H
-#define ULLMF_CANDIDATE_H
+#ifndef ULLMF_DISTRIBUTION_H
+#define ULLMF_DISTRIBUTION_H
 
-#define ullmf_candidate_class "candidate"
+#define ullmf_candidate_class "distribution"
 
 #ifdef __cplusplus
 extern "C" {

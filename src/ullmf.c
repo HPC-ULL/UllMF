@@ -72,7 +72,10 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
 }
 
 enum ullmf_error ullmf_mpi_free(ullmf_calibration_t * const calib) {
-    _delete(calib->workload);
+	if (calib->workload != 0)
+		_delete(calib->workload);
+	if (calib->strategy->best_candidate != 0)
+		_delete(calib->strategy->best_candidate);
     free(calib->measurements);
     return ULLMF_SUCCESS;
 }

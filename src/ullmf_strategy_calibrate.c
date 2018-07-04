@@ -21,6 +21,8 @@
 #include <float.h>
 #include <ullmf_distribution.h>
 
+static const double epsilon = 0.0005;
+
 static void calculate_totals(ullmf_calibration_t* calib, double * total_time, double * tmax, double * tmin) {
 	*total_time = 0;
 	*tmax = 0;
@@ -41,21 +43,22 @@ static void calculate_totals(ullmf_calibration_t* calib, double * total_time, do
 static ullmf_distribution_t * get_current_ratios(ullmf_calibration_t* calib) {
 	double * ratios = calloc(calib->num_procs, sizeof(double));
 	dbglog_info("        time ratios: ");
-	double time_ratio_sum = 0;
+	double total_speed = 0;
+
 	for (int i = 0; i < calib->num_procs; i++) {
-		if (calib->measurements[i] == 0)
+		if (calib->measurements[i] > -epsilon && calib->measurements[i] < epsilon) // == 0
 			ratios[i] = 0;
 		else
 			ratios[i] = calib->workload->counts[i] / calib->measurements[i];
-		dbglog_append(DBG_FMT " ", to_return[i]);
-		time_ratio_sum += ratios[i];
+		dbglog_append(DBG_FMT " ", ratios[i]);
+		total_speed += ratios[i];
 	}
+
 	dbglog_append("\n");
-	if (time_ratio_sum != 1) {
-	    for (int i = 0; i < calib->num_procs; i++) {
-	    	ratios[i] = ratios[i] / time_ratio_sum;
-	    }
+	for (int i = 0; i < calib->num_procs; i++) {
+		ratios[i] = ratios[i] / total_speed;
 	}
+
 	ullmf_distribution_t * to_ret = _new(Distribution, calib->num_procs, ratios);
 	free(ratios);
 	return to_ret;
@@ -63,7 +66,6 @@ static ullmf_distribution_t * get_current_ratios(ullmf_calibration_t* calib) {
 
 static int calibrate(ullmf_calibration_t* calib) {
 	ullmf_strategy_calibrate_t* strategy = (ullmf_strategy_calibrate_t*) calib->strategy;
-
 	dbglog_info(" -- Current strategy: (%d) ", strategy->parent._class.name);
     double total_time, tmax, tmin;
     calculate_totals(calib, &total_time, &tmax, &tmin);
@@ -85,7 +87,7 @@ static int calibrate(ullmf_calibration_t* calib) {
     return ULLMF_TAG_RECALIBRATING;
 }
 
-ullmf_strategy_calibrate_t ullmf_strategy_calibrate = {
+static ullmf_strategy_calibrate_t _ullmf_strategy_calibrate = {
     .parent._class.size = sizeof(ullmf_strategy_calibrate_t),
     .parent._class.name = ullmf_strategy_calibrate_class,
     .parent.mdevice = (measurement_device_t *) &mpi_device,
@@ -95,3 +97,5 @@ ullmf_strategy_calibrate_t ullmf_strategy_calibrate = {
 	.threshold = 0.05,
 
 };
+
+ullmf_strategy_t * ullmf_strategy_calibrate = (ullmf_strategy_t *) &_ullmf_strategy_calibrate;
