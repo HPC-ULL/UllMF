@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.9)
-project (ullmf VERSION 0.1 DESCRIPTION "Ull Multiobjective Framework")
+cmake_minimum_required (VERSION 3.7)
+project (ullmf VERSION 0.1)
 # gnu lib tree
 include(GNUInstallDirs)
 include(CTest)
@@ -31,8 +31,24 @@ if (EML)
 endif(EML)
 
 
+FIND_PATH(CUNIT_INCLUDE_DIR NAMES CUnit/CUnit.h)
+MARK_AS_ADVANCED(CUNIT_INCLUDE_DIR)
 
+FIND_LIBRARY(CUNIT_LIBRARY NAMES 
+    cunit
+    libcunit
+    cunitlib
+)
+MARK_AS_ADVANCED(CUNIT_LIBRARY)
 
-add_subdirectory(test)
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CUnit DEFAULT_MSG CUNIT_LIBRARY CUNIT_INCLUDE_DIR)
+
+IF(CUNIT_FOUND)
+  SET(CUNIT_LIBRARIES ${CUNIT_LIBRARY})
+  SET(CUNIT_INCLUDE_DIRS ${CUNIT_INCLUDE_DIR})
+  add_subdirectory(test)
+ENDIF(CUNIT_FOUND)
+
 add_subdirectory(src)
 
