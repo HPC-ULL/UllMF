@@ -22,10 +22,12 @@ set(sources
   ullmf.c
 )
 
+set (CMAKE_MODULE_PATH module_path)
+
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
-find_library(EML eml)
+find_package(EML)
 if (EML)
   set(sources ${sources} ullmf_measurement_device_eml.c)
 endif(EML)
