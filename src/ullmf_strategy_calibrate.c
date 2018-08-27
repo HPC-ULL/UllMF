@@ -90,12 +90,11 @@ static int calibrate(ullmf_calibration_t* calib) {
 static ullmf_strategy_calibrate_t _ullmf_strategy_calibrate = {
     .parent._class.size = sizeof(ullmf_strategy_calibrate_t),
     .parent._class.name = ullmf_strategy_calibrate_class,
-    .parent.mdevice = (measurement_device_t *) &mpi_device,
+    .parent.mdevice = (measurement_device_t *) &ullmf_mpi_device,
     .parent.calibrate = &calibrate,
     .parent.redistribute = &ullmf_strategy_redistribute,
 	.parent.best_candidate = 0,
 	.threshold = 0.05,
-
 };
 
 ullmf_strategy_t * ullmf_strategy_calibrate = (ullmf_strategy_t *) &_ullmf_strategy_calibrate;

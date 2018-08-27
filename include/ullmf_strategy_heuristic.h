@@ -25,30 +25,50 @@
 extern "C" {
 #endif
 
+#define ullmf_strategy_heuristic_class "ullmf_strategy_heuristic"
+
 typedef struct ullmf_strategy_heuristic ullmf_strategy_heuristic_t;
 
 /** Contains state, properties and methods for an strategy */
-struct ullmf_strategy_heuristic_time {
+struct ullmf_strategy_heuristic {
     /** Object inheritance */
-    class_t _class;
+    ullmf_strategy_t parent;
 
-    /** */
+    /** Determines whether the measurement is being done or not */
     bool is_calibrating;
 
-    /* 0 - 10000 value representing  a probability from 0.00% to 100.00% */
-    int reset_probability;
+    // TODO Use Int logic instead of doubles for probabilities
+    /** 0 - 10000 value representing  a probability from 0.00% to 100.00% */
+    double reset_probability;
 
-    /* Used to save the value of reset_probability though the algorithm
+    /** Used to save the value of reset_probability though the algorithm
      * 0 - 10000 value representing  a probability from 0.00% to 100.00% */
-    int initial_reset_probability;
+    double initial_reset_probability;
 
-    /* Amount of probability to increment in the heuristic after a criteria is met */
-    int reset_increment;
+    /** Amount of probability to increment in the heuristic after a criteria is met */
+    double reset_increment;
+
+    /** Neighbor Candidate distance */
+	double search_distance;
+
+	/** Neighbor Candidate distance when reset probability is met  */
+	double reset_distance;
+
+	/** Threshold to stop the heuristic search */
+	double search_threshold;
 
     /** Heuristic population evaluation */
-    double evalue_workload_distribution(int* candidate_counts, double* resource_ratios);
+    double (*evalue_workload_distribution)(ullmf_calibration_t* calib,
+    									   int* candidate_counts, double* resource_ratios);
 };
 
+double _ullmf_evalue_sum(ullmf_calibration_t* calib,
+						 int* candidate_counts, double* resource_ratios);
+
+double _ullmf_evalue_max(ullmf_calibration_t* calib,
+						 int* candidate_counts, double* resource_ratios);
+
+int _ullmf_heuristic_calibrate(ullmf_calibration_t* calib);
 
 
 #ifdef __cplusplus

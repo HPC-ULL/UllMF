@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#define ullmf_strategy_heuristic_energy_class "ullmf_strategy_heuristic_energy"
+
 typedef struct ullmf_strategy_heuristic_energy ullmf_strategy_heuristic_energy_t;
 
 /** Contains state, properties and methods for an strategy */
@@ -29,7 +31,7 @@ struct ullmf_strategy_heuristic_energy {
     ullmf_strategy_heuristic_t parent;
 };
 
-
+extern ullmf_strategy_t * ullmf_strategy_heuristic_energy;
 
 #ifdef __cplusplus
 }

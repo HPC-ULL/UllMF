@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#define ullmf_strategy_heuristic_time_class "ullmf_strategy_heuristic_time"
+
 typedef struct ullmf_strategy_heuristic_time ullmf_strategy_heuristic_time_t;
 
 /** Contains state, properties and methods for an strategy */
@@ -29,6 +31,7 @@ struct ullmf_strategy_heuristic_time {
     ullmf_strategy_heuristic_t parent;
 };
 
+extern ullmf_strategy_t * ullmf_strategy_heuristic_time;
 
 
 #ifdef __cplusplus

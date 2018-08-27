@@ -18,7 +18,10 @@ set(sources
   ullmf_measurement_device_mpi.c
   ullmf_strategy.c
   ullmf_strategy_calibrate.c
+  ullmf_strategy_heuristic.c
+  ullmf_strategy_heuristic_time.c
   ullmf_workload.c
+  ullmf_timer.c
   ullmf.c
 )
 
@@ -29,7 +32,10 @@ include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 find_package(EML)
 if (EML)
-  set(sources ${sources} ullmf_measurement_device_eml.c)
+  set(sources ${sources} 
+    ullmf_measurement_device_eml.c
+    ullmf_strategy_heuristic_energy.c
+  )
 endif(EML)
 
 

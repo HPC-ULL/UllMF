@@ -56,7 +56,7 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     return ULLMF_MEASUREMENT_SUCCESS;
 }
 
-measurement_device_mpi_t mpi_device = {
+measurement_device_mpi_t ullmf_mpi_device = {
         .parent._class.name = ullmf_mpi_class,
         .parent.measuring = 0,
         .parent.measurement = .0,
