@@ -46,13 +46,13 @@ struct ullmf_strategy_heuristic {
     double initial_reset_probability;
 
     /** Amount of probability to increment in the heuristic after a criteria is met */
-    double reset_increment;
+    double reset_probability_increment;
 
     /** Neighbor Candidate distance */
 	double search_distance;
 
 	/** Neighbor Candidate distance when reset probability is met  */
-	double reset_distance;
+	double reset_search_distance;
 
 	/** Threshold to stop the heuristic search */
 	double search_threshold;

@@ -19,13 +19,13 @@
 #include "debug.h"
 
 // TODO Parameters inside a constructor for the strategy
-static const double energy_reset_probability = 0.03;
-static const double energy_reset_increment = 0.02;
-static const double starting_search_distance = 0.25;
-static const double restarting_search_distance = 0.12;
-static const double search_threshold = 0.02;
+#define _energy_reset_probability 0.03
+#define _energy_reset_increment 0.02
+#define _starting_search_distance 0.25
+#define _restarting_search_distance 0.12
+#define _search_threshold 0.02
 
-static const ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
+static ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
     .parent.parent._class.size = sizeof(ullmf_strategy_heuristic_energy_t),
     .parent.parent._class.name = ullmf_strategy_heuristic_energy_class,
     .parent.parent.mdevice = (measurement_device_t *) &ullmf_eml_device,
@@ -34,12 +34,12 @@ static const ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy 
 	.parent.parent.best_candidate = 0,
 	.parent.evalue_workload_distribution = &_ullmf_evalue_sum,
 	.parent.is_calibrating = 0,
-	.parent.reset_probability = energy_reset_probability,
-	.parent.initial_reset_probability = energy_reset_probability,
-	.parent.reset_increment = energy_reset_increment,
-	.parent.search_distance = starting_search_distance,
-	.parent.reset_distance = restarting_search_distance,
-	.parent.search_threshold = search_threshold,
+	.parent.reset_probability = _energy_reset_probability,
+	.parent.initial_reset_probability = _energy_reset_probability,
+	.parent.reset_probability_increment = _energy_reset_increment,
+	.parent.search_distance = _starting_search_distance,
+	.parent.reset_search_distance = _restarting_search_distance,
+	.parent.search_threshold = _search_threshold,
 };
 
 ullmf_strategy_t * ullmf_strategy_heuristic_energy = (ullmf_strategy_t *) &_ullmf_strategy_heuristic_energy;

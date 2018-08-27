@@ -22,6 +22,9 @@ static void set_workload(ullmf_workload_t* self, const int * const counts, const
 	 memcpy(self->counts, counts, memsize);
 	 memcpy(self->displs, displs, memsize);
 	 self->size = self->displs[self->num_procs - 1] + self->counts[self->num_procs - 1];
+
+	 for (int i = 0; i < self->num_procs; i++)
+		 self->ratios[i] = self->counts[i] / (double) self->size;
 }
 
 static void set_blocksize(ullmf_workload_t* self, const int block_size) {
@@ -39,12 +42,16 @@ static void * ullmf_workload_t_constructor(void * self, va_list * args) {
     _self->counts = malloc(memsize);
     memcpy(_self->counts, counts, memsize);
 
-    memsize = sizeof(_self->displs) * _self->num_procs;
     _self->displs = malloc(memsize);
     memcpy(_self->displs, displs, memsize);
 
     _self->size = _self->displs[_self->num_procs - 1] + _self->counts[_self->num_procs - 1];
     _self->blocksize = va_arg(*args, int);
+
+    memsize = sizeof(_self->ratios) * _self->num_procs;
+    _self->ratios = malloc(memsize);
+    for (int i = 0; i < _self->num_procs; i++)
+    	_self->ratios[i] = _self->counts[i] / (double) _self->size;
 
     // Functions
     _self->set_workload = &set_workload;

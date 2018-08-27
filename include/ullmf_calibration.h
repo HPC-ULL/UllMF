@@ -29,7 +29,6 @@ extern "C" {
 
 
 /** Contains state, properties and methods for an strategy */
-// TODO separar ull_calibration_t en ull_calibration_t y ull_workload_t
 struct ullmf_calibration {
     /** Object inheritance */
     class_t _class;

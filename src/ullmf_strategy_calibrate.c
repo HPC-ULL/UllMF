@@ -40,7 +40,7 @@ static void calculate_totals(ullmf_calibration_t* calib, double * total_time, do
 	}
 }
 
-static ullmf_distribution_t * get_current_ratios(ullmf_calibration_t* calib) {
+static ullmf_distribution_t * get_current_performance(ullmf_calibration_t* calib) {
 	double * ratios = calloc(calib->num_procs, sizeof(double));
 	dbglog_info("        time ratios: ");
 	double total_speed = 0;
@@ -82,7 +82,7 @@ static int calibrate(ullmf_calibration_t* calib) {
 
 	if (calib->strategy->best_candidate != 0)
 		_delete(calib->strategy->best_candidate);
-	calib->strategy->best_candidate = get_current_ratios(calib);
+	calib->strategy->best_candidate = get_current_performance(calib);
 
     return ULLMF_TAG_RECALIBRATING;
 }

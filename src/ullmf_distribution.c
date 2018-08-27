@@ -36,7 +36,6 @@ static double get_total(ullmf_distribution_t * self) {
 	return self->total;
 }
 
-#include <stdio.h>
 static void redistribute_remainder(ullmf_distribution_t * self) {
 //TODO redistribute remainder if excess != 0
 	if (!self->excess)

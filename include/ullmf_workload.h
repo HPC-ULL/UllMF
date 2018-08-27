@@ -26,6 +26,7 @@ struct ullmf_workload {
     int num_procs; // Num processes
     int * counts; // Amount of workload
     int * displs; // Workload location
+    double * ratios; // Ratios of work assigned to each process
     int size; // Total workload
     int blocksize; // Minimum amount of work
 
