@@ -56,30 +56,30 @@ void test_redistribute(void)
 
 	calib.strategy->redistribute(&calib);
 
-	CU_ASSERT_EQUAL(0.10 * total, workload->counts[0]);
-	CU_ASSERT_EQUAL(0.20 * total, workload->counts[1]);
-	CU_ASSERT_EQUAL(0.30 * total, workload->counts[2]);
-	CU_ASSERT_EQUAL(0.40 * total, workload->counts[3]);
+	CU_ASSERT_EQUAL(0.10 * total, calib.workload->counts[0]);
+	CU_ASSERT_EQUAL(0.20 * total, calib.workload->counts[1]);
+	CU_ASSERT_EQUAL(0.30 * total, calib.workload->counts[2]);
+	CU_ASSERT_EQUAL(0.40 * total, calib.workload->counts[3]);
 
-	CU_ASSERT_EQUAL( workload->counts[0] % blocksize, 0);
-	CU_ASSERT_EQUAL( workload->counts[1] % blocksize, 0);
-	CU_ASSERT_EQUAL( workload->counts[2] % blocksize, 0);
-	CU_ASSERT_EQUAL( workload->counts[3] % blocksize, 0);
+	CU_ASSERT_EQUAL( calib.workload->counts[0] % blocksize, 0);
+	CU_ASSERT_EQUAL( calib.workload->counts[1] % blocksize, 0);
+	CU_ASSERT_EQUAL( calib.workload->counts[2] % blocksize, 0);
+	CU_ASSERT_EQUAL( calib.workload->counts[3] % blocksize, 0);
 
 	total = 11000;
 	int counts2[4] = {3000, 3000, 3000, 2000};
 	int displs2[4] = {0, 3000, 6000, 9000};
 	double ratios2[4] = {0.09, 0.2, 0.30, 0.40};
-	workload->set_workload(workload, counts2, displs2);
+	calib.workload->set_workload(calib.workload, counts2, displs2);
 	new_distribution->set_ratios(new_distribution, ratios2);
 
 	calib.strategy->redistribute(&calib);
-	CU_ASSERT_EQUAL(workload->counts[0] % blocksize, 0);
-	CU_ASSERT_EQUAL(workload->counts[1] % blocksize, 0);
-	CU_ASSERT_EQUAL(workload->counts[2] % blocksize, 0);
-	CU_ASSERT_EQUAL(workload->counts[3] % blocksize, 0);
+	CU_ASSERT_EQUAL(calib.workload->counts[0] % blocksize, 0);
+	CU_ASSERT_EQUAL(calib.workload->counts[1] % blocksize, 0);
+	CU_ASSERT_EQUAL(calib.workload->counts[2] % blocksize, 0);
+	CU_ASSERT_EQUAL(calib.workload->counts[3] % blocksize, 0);
 
-	_delete(workload);
+	_delete(calib.workload);
 	_delete(new_distribution);
 }
 

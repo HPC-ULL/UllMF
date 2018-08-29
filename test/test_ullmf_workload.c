@@ -12,6 +12,7 @@
 #include "CUnit/Basic.h"
 #include "ullmf_class_utils.h"
 #include "ullmf_workload.h"
+#include "ullmf_distribution.h"
 
 static ullmf_workload_t* workload1;
 static int counts[2] = {2, 2};
@@ -81,6 +82,34 @@ void test_set_blocksize(void)
 	CU_ASSERT_EQUAL(workload1->blocksize, blocksize * 2);
 }
 
+void test_new_from_distribution(void)
+{
+	int in_counts[4] = {5000, 5000, 5000, 5000};
+	int total = 20000;
+	int in_displs[4] = {0, 5000, 10000, 15000};
+	int in_num_procs = 4;
+	int in_blocksize = 8;
+	double ratios[4] = {0.10, 0.20, 0.30, 0.40};
+
+	ullmf_workload_t * workload2 = _new(Workload, in_num_procs, in_counts, in_displs, in_blocksize);
+	ullmf_distribution_t * distribution = _new(Distribution, in_num_procs, ratios);
+	ullmf_workload_t * workload3 = workload2->new_from_distribution(workload2, distribution);
+
+	CU_ASSERT_EQUAL(0.10 * total, workload3->counts[0]);
+	CU_ASSERT_EQUAL(0.20 * total, workload3->counts[1]);
+	CU_ASSERT_EQUAL(0.30 * total, workload3->counts[2]);
+	CU_ASSERT_EQUAL(0.40 * total, workload3->counts[3]);
+
+	CU_ASSERT_EQUAL( workload3->counts[0] % blocksize, 0);
+	CU_ASSERT_EQUAL( workload3->counts[1] % blocksize, 0);
+	CU_ASSERT_EQUAL( workload3->counts[2] % blocksize, 0);
+	CU_ASSERT_EQUAL( workload3->counts[3] % blocksize, 0);
+
+	_delete(workload2);
+	_delete(workload3);
+	_delete(distribution);
+}
+
 void test_destructor(void)
 {
 	((class_t*) workload1->_class)->destructor(workload1);
@@ -112,6 +141,7 @@ int main()
    if ((NULL == CU_add_test(pSuite, "test of workload constructor()", test_constructor)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload set_workload()", test_set_workload)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload set_blocksize()", test_set_blocksize)) ||
+	   (NULL == CU_add_test(pSuite, "test of workload new_from_distribution()", test_new_from_distribution)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload destructor()", test_destructor))
       )
    {

@@ -57,6 +57,15 @@ struct ullmf_strategy_heuristic {
 	/** Threshold to stop the heuristic search */
 	double search_threshold;
 
+	/** Inversion mechanism for last movement */
+	bool tried_inversion;
+
+	/** Was the previous movement an inversion */
+	bool previously_inverted; //TODO
+
+	/** Previous resource consumption */
+	double previous_consumption;
+
     /** Heuristic population evaluation */
     double (*evalue_workload_distribution)(ullmf_calibration_t* calib,
     									   int* candidate_counts, double* resource_ratios);

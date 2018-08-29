@@ -17,8 +17,9 @@
 
 #include <math.h>
 #include <float.h>
+#include <string.h>
 
-static const double epsilon = 0.05;
+static const double epsilon = 0.0005;
 
 double _ullmf_evalue_sum(ullmf_calibration_t* calib,
 					     int* candidate_counts, double* resource_ratios) {
@@ -52,28 +53,54 @@ static double get_resource_ratio(double resource_consumption, int counts) {
     	return resource_consumption / (double) counts;
 }
 
-static ullmf_workload_t * move_workload(int from, current_ratios, int direction) {
-	//TODO Movement from "from" to the rest of the processes
+static ullmf_workload_t * move_workload(ullmf_calibration_t* calib, int fromto, int direction) {
+	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
+
+	double to_move = heuristic->search_distance;
+	double * new_ratios;
+	size_t memsize = calib->num_procs * sizeof(double);
+	memcpy(new_ratios, calib->workload->ratios, memsize);
+
+	new_ratios[fromto] += to_move * direction;
+	double remaining_movement = to_move;
+	while (remaining_movement > epsilon && remaining_movement < -epsilon) {
+		double current_movement = remaining_movement / (calib->num_procs - 1);
+		for (int i = 0; i < calib->num_procs; i++) {
+			if (i == fromto)
+				continue;
+			if (is_movement_legal(new_ratios[i], current_movement, -direction)) {
+				new_ratios[i] += current_movement * -direction;
+				remaining_movement -= current_movement;
+			}
+		}
+	}
+
+	ullmf_distribution_t * new_distribution = _new(Distribution, calib->num_procs, new_ratios);
+	ullmf_workload_t * new_workload = calib->workload->new_from_distribution(calib->workload, new_distribution);
+	_delete(new_distribution);
+	free(new_ratios);
+	return new_workload;
 }
 
-static int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t ** candidates) {
+static int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t** candidates) {
+	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	int num_candidates = calib->num_procs * 2; // TODO substitution for parametric value heuristic size
 											   // should be included inside heuristic constructor
 	int direction = 1;
 	candidates = malloc(num_candidates * sizeof(candidates));
-	double * current_workload_ratios = calib->workload->ratios;
-	for (int i = 0; i < calib->num_procs * 2; i++) {
-		if (is_movement_legal(current_workload_ratios[i], direction)) {
-			candidates[i] = move_workload(i, current_workload_ratios, direction);
+	for (int i = 0; i < num_candidates; i++) {
+		int process = i % calib->num_procs;
+		if (is_movement_legal(calib->workload->ratios[process], heuristic->search_distance, direction)) {
+			candidates[i] = move_workload(calib, process, direction);
 		}
 		direction = -direction;
 	}
 	return num_candidates;
 }
 
-static void free_distributions(int num_candidates, ullmf_workload_t ** candidates) {
+static void free_distributions(int num_candidates, ullmf_workload_t** candidates) {
 	for (int i = 0; i < num_candidates; i++)
-		free(candidates[i]);
+		_delete(candidates[i]);
 	free(candidates);
 }
 
@@ -111,17 +138,21 @@ int _ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 	if (calib->strategy->mdevice->measuring) // Energy measurements require time
 		return ULLMF_TAG_CALIBRATED;
 
-	ullmf_strategy_heuristic_t* strategy = (ullmf_strategy_heuristic_t*) calib->strategy;
-	if (strategy->search_distance < strategy->search_threshold) {
+	ullmf_strategy_heuristic_t* heuristic = (ullmf_strategy_heuristic_t*) calib->strategy;
+	if (heuristic->search_distance < heuristic->search_threshold) {
 		//Probability
-		bool reset = (double)(random() % 10000) / 100; // TODO change to int logic
-		if (reset) {
-			strategy->search_distance = strategy->reset_search_distance;
-			strategy->reset_probability = strategy->initial_reset_probability;
-			// TODO Inversion
+		if (!heuristic->tried_inversion) {
+			heuristic->tried_inversion = true;
 		} else {
-			strategy->reset_probability += strategy->reset_probability_increment;
-			return ULLMF_TAG_CALIBRATED;
+			bool reset = (double)(random() % 10000) / 100; // TODO change to int logic
+			if (reset) {
+				heuristic->search_distance = heuristic->reset_search_distance;
+				heuristic->reset_probability = heuristic->initial_reset_probability;
+				// TODO Inversion on last reset
+			} else {
+				heuristic->reset_probability += heuristic->reset_probability_increment;
+				return ULLMF_TAG_CALIBRATED;
+			}
 		}
 	}
 

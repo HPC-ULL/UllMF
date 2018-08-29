@@ -13,6 +13,8 @@
 #ifndef ULLMF_WORKLOAD_H
 #define ULLMF_WORKLOAD_H
 
+#include "ullmf_distribution.h"
+
 #define ullmf_workload_class "workload"
 
 #ifdef __cplusplus
@@ -32,6 +34,8 @@ struct ullmf_workload {
 
     void (* set_workload)(ullmf_workload_t* self, const int * const counts, const int * const displs);
     void (* set_blocksize)(ullmf_workload_t* self, const int block_size);
+    ullmf_workload_t* (* new_from_distribution)(ullmf_workload_t* self, ullmf_distribution_t * dist);
+
 };
 
 extern const void * Workload;

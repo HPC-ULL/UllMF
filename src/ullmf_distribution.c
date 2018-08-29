@@ -86,6 +86,7 @@ static void redistribute_remainder(ullmf_distribution_t * self) {
     dbglog_append("\n");
 }
 
+// constructor(int num_procs, double * ratios)
 static void * ullmf_distribution_t_constructor(void * self, va_list * args) {
 	ullmf_distribution_t * _self = self;
 

@@ -36,6 +36,8 @@ struct ullmf_distribution {
 
 extern const void * Distribution;
 
+// constructor(int num_procs, double * ratios)
+
 #ifdef __cplusplus
 }
 #endif
