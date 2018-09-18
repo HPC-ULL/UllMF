@@ -144,8 +144,8 @@ int _ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 		if (!heuristic->tried_inversion) {
 			heuristic->tried_inversion = true;
 		} else {
-			bool reset = (double)(random() % 10000) / 100; // TODO change to int logic
-			if (reset) {
+			double reset = (double)(random() % 10000) / 100; // TODO change to int logic
+      if (reset < heuristic->reset_prob)
 				heuristic->search_distance = heuristic->reset_search_distance;
 				heuristic->reset_probability = heuristic->initial_reset_probability;
 				// TODO Inversion on last reset
