@@ -9,6 +9,8 @@
 
 #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
 
+#define DBG_FMT "%8g"
+
 #else
 
 #define DBGLOG(...)

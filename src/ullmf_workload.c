@@ -26,7 +26,7 @@ static void set_workload(ullmf_workload_t * self, const int * const counts, cons
 	 self->size = self->displs[self->num_procs - 1] + self->counts[self->num_procs - 1];
 
 	 for (int i = 0; i < self->num_procs; i++)
-		 self->ratios[i] = self->counts[i] / (double) self->size;
+		 self->proportional_workload[i] = self->counts[i] / (double) self->size;
 }
 
 static void set_blocksize(ullmf_workload_t * self, const int block_size) {
@@ -38,15 +38,15 @@ static ullmf_workload_t * new_from_distribution(ullmf_workload_t* self, ullmf_di
 	int * new_displs = malloc(sizeof(self->displs) * self->num_procs);
 
 	if (self->num_procs > 0) {
-		new_counts[0] = dist->ratios[0] * self->size;
+		new_counts[0] = dist->proportional_workload[0] * self->size;
 		new_displs[0] = 0;
 	}
 
 	int block_total_count = self->size / self->blocksize;
 	int remaining = block_total_count;
 
-	double best_ratio = dist->ratios[0];
-	double worst_ratio = dist->ratios[0];
+	double best_ratio = dist->proportional_workload[0];
+	double worst_ratio = dist->proportional_workload[0];
 
 	int best_processor = 0;
 	int worst_processor = 0;
@@ -54,17 +54,17 @@ static ullmf_workload_t * new_from_distribution(ullmf_workload_t* self, ullmf_di
 
 	// Transforms ratios into real problem sizes
 	for (int i = 0; i < self->num_procs; i++) {
-		if (dist->ratios[i] > best_ratio) {
-			best_ratio = dist->ratios[i];
+		if (dist->proportional_workload[i] > best_ratio) {
+			best_ratio = dist->proportional_workload[i];
 			best_processor = i;
 		}
 
-		if (dist->ratios[i] < worst_ratio) {
-			worst_ratio = dist->ratios[i];
+		if (dist->proportional_workload[i] < worst_ratio) {
+			worst_ratio = dist->proportional_workload[i];
 			worst_processor = i;
 		}
 
-		assigned_blocks = round(block_total_count * dist->ratios[i]);
+		assigned_blocks = round(block_total_count * dist->proportional_workload[i]);
 		new_counts[i] = assigned_blocks * self->blocksize;
 		remaining -= assigned_blocks;
 	}
@@ -85,6 +85,11 @@ static ullmf_workload_t * new_from_distribution(ullmf_workload_t* self, ullmf_di
 }
 
 
+static ullmf_workload_t * copy(ullmf_workload_t* self) {
+	return _new(Workload, self->num_procs, self->counts, self->displs, self->blocksize);
+}
+
+
 static void * ullmf_workload_t_constructor(void * self, va_list * args) {
     ullmf_workload_t * _self = self;
 
@@ -102,15 +107,16 @@ static void * ullmf_workload_t_constructor(void * self, va_list * args) {
     _self->size = _self->displs[_self->num_procs - 1] + _self->counts[_self->num_procs - 1];
     _self->blocksize = va_arg(*args, int);
 
-    memsize = sizeof(_self->ratios) * _self->num_procs;
-    _self->ratios = malloc(memsize);
+    memsize = sizeof(_self->proportional_workload) * _self->num_procs;
+    _self->proportional_workload = malloc(memsize);
     for (int i = 0; i < _self->num_procs; i++)
-    	_self->ratios[i] = _self->counts[i] / (double) _self->size;
+    	_self->proportional_workload[i] = _self->counts[i] / (double) _self->size;
 
     // Functions
     _self->set_workload = &set_workload;
     _self->set_blocksize = &set_blocksize;
     _self->new_from_distribution = &new_from_distribution;
+    _self->copy = &copy;
     return _self;
 }
 

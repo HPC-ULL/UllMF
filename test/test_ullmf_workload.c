@@ -110,6 +110,51 @@ void test_new_from_distribution(void)
 	_delete(distribution);
 }
 
+
+void test_copy(void) {
+	int in_counts[4] = {5000, 5000, 5000, 5000};
+	int in_displs[4] = {0, 5000, 10000, 15000};
+	int in_num_procs = 4;
+	int in_blocksize = 8;
+
+	ullmf_workload_t * workload2 = _new(Workload, in_num_procs, in_counts, in_displs, in_blocksize);
+	ullmf_workload_t * workload3 = workload2->copy(workload2);
+
+	CU_ASSERT_EQUAL(5000, workload2->counts[0]);
+	CU_ASSERT_EQUAL(5000, workload2->counts[1]);
+	CU_ASSERT_EQUAL(5000, workload2->counts[2]);
+	CU_ASSERT_EQUAL(5000, workload2->counts[3]);
+	CU_ASSERT_EQUAL(5000, workload3->counts[0]);
+	CU_ASSERT_EQUAL(5000, workload3->counts[1]);
+	CU_ASSERT_EQUAL(5000, workload3->counts[2]);
+	CU_ASSERT_EQUAL(5000, workload3->counts[3]);
+
+	CU_ASSERT_EQUAL(0, workload2->displs[0]);
+	CU_ASSERT_EQUAL(5000, workload2->displs[1]);
+	CU_ASSERT_EQUAL(10000, workload2->displs[2]);
+	CU_ASSERT_EQUAL(15000, workload2->displs[3]);
+	CU_ASSERT_EQUAL(0, workload3->displs[0]);
+	CU_ASSERT_EQUAL(5000, workload3->displs[1]);
+	CU_ASSERT_EQUAL(10000, workload3->displs[2]);
+	CU_ASSERT_EQUAL(15000, workload3->displs[3]);
+
+	CU_ASSERT_EQUAL(4, workload2->num_procs);
+	CU_ASSERT_EQUAL(4, workload3->num_procs);
+
+	CU_ASSERT_EQUAL(8, workload2->blocksize);
+	CU_ASSERT_EQUAL(8, workload3->blocksize);
+
+	workload2->displs[0] = 99999;
+	workload2->counts[0] = 99999;
+
+	CU_ASSERT_EQUAL(0, workload3->displs[0]);
+	CU_ASSERT_EQUAL(5000, workload3->counts[0]);
+
+	_delete(workload2);
+	_delete(workload3);
+}
+
+
 void test_destructor(void)
 {
 	((class_t*) workload1->_class)->destructor(workload1);
@@ -142,7 +187,9 @@ int main()
 	   (NULL == CU_add_test(pSuite, "test of workload set_workload()", test_set_workload)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload set_blocksize()", test_set_blocksize)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload new_from_distribution()", test_new_from_distribution)) ||
+	   (NULL == CU_add_test(pSuite, "test of workload copy()", test_copy)) ||
 	   (NULL == CU_add_test(pSuite, "test of workload destructor()", test_destructor))
+
       )
    {
       CU_cleanup_registry();

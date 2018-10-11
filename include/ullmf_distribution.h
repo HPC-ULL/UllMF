@@ -24,11 +24,12 @@ typedef struct ullmf_distribution ullmf_distribution_t;
 struct ullmf_distribution {
     const void * _class;
     int num_procs; // number of candidates
-    double * ratios; // Workload normalized distribution
+    double * proportional_workload; // Workload normalized distribution
     double total; // Workload total (to check if sum(ratios) == 1
     int excess;
 
-    void (* set_ratios)(ullmf_distribution_t * self, const double * const ratios);
+    void (* set_proportional_workload)(ullmf_distribution_t * self,
+    								   const double * const proportional_workload);
     int (* get_num_procs)(ullmf_distribution_t * self);
     double (* get_total)(ullmf_distribution_t * self);
     void (* redistribute_remainder)(ullmf_distribution_t * self);

@@ -38,6 +38,7 @@ static void calculate_totals(ullmf_calibration_t* calib, double * total_time, do
 		if (calib->measurements[i] < *tmin)
 			*tmin = calib->measurements[i];
 	}
+	dbglog_append("\n");
 }
 
 static ullmf_distribution_t * get_current_performance(ullmf_calibration_t* calib) {
@@ -66,7 +67,7 @@ static ullmf_distribution_t * get_current_performance(ullmf_calibration_t* calib
 
 static int calibrate(ullmf_calibration_t* calib) {
 	ullmf_strategy_calibrate_t* strategy = (ullmf_strategy_calibrate_t*) calib->strategy;
-	dbglog_info(" -- Current strategy: (%d) ", strategy->parent._class.name);
+	dbglog_info(" -- Current strategy: (%s) \n", strategy->parent._class.name);
     double total_time, tmax, tmin;
     calculate_totals(calib, &total_time, &tmax, &tmin);
 

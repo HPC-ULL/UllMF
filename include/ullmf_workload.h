@@ -28,10 +28,11 @@ struct ullmf_workload {
     int num_procs; // Num processes
     int * counts; // Amount of workload
     int * displs; // Workload location
-    double * ratios; // Ratios of work assigned to each process
-    int size; // Total workload
+    double * proportional_workload; // Ratios of work assigned to each process
+    size_t size; // Total workload
     int blocksize; // Minimum amount of work
 
+    ullmf_workload_t* (* copy)(ullmf_workload_t* self);
     void (* set_workload)(ullmf_workload_t* self, const int * const counts, const int * const displs);
     void (* set_blocksize)(ullmf_workload_t* self, const int block_size);
     ullmf_workload_t* (* new_from_distribution)(ullmf_workload_t* self, ullmf_distribution_t * dist);

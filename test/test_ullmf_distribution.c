@@ -33,30 +33,30 @@ int clean_suite1(void)
 void test_constructor(void)
 {
     int num_procs = 4;
-	double ratios[4] = {0.25, 0.2, 0.25, 0.3};
-	distribution1 = _new(Distribution, num_procs, ratios);
+	double proportional_workload[4] = {0.25, 0.2, 0.25, 0.3};
+	distribution1 = _new(Distribution, num_procs, proportional_workload);
 	CU_ASSERT_NOT_EQUAL(distribution1, 0);
 	CU_ASSERT_EQUAL(distribution1->_class, Distribution);
 	CU_ASSERT_STRING_EQUAL(((class_t*) distribution1->_class)->name, ((class_t*) Distribution)->name);
-	CU_ASSERT_NOT_EQUAL(distribution1->ratios, 0);
-	CU_ASSERT_NOT_EQUAL(distribution1->ratios, ratios);
+	CU_ASSERT_NOT_EQUAL(distribution1->proportional_workload, 0);
+	CU_ASSERT_NOT_EQUAL(distribution1->proportional_workload, proportional_workload);
     CU_ASSERT_EQUAL(distribution1->num_procs, num_procs);
     double total = 0;
 	for (int i = 0; i < distribution1->num_procs; i++) {
-		CU_ASSERT_DOUBLE_EQUAL(ratios[i], distribution1->ratios[i], 0.005);
-		total += ratios[i];
+		CU_ASSERT_DOUBLE_EQUAL(proportional_workload[i], distribution1->proportional_workload[i], 0.005);
+		total += proportional_workload[i];
 	}
 	CU_ASSERT_DOUBLE_EQUAL(distribution1->total, total, 0.005);
 }
 
-void test_set_ratios(void)
+void test_set_proportional_workload(void)
 {
-	double ratios2[4] = {0.2, 0.15, 0.35, 0.35};
-	distribution1->set_ratios(distribution1, ratios2);
+	double proportional_workload2[4] = {0.2, 0.15, 0.35, 0.35};
+	distribution1->set_proportional_workload(distribution1, proportional_workload2);
     double total = 0;
 	for (int i = 0; i < distribution1->num_procs; i++) {
-		CU_ASSERT_DOUBLE_EQUAL(ratios2[i], distribution1->ratios[i], 0.005);
-		total += ratios2[i];
+		CU_ASSERT_DOUBLE_EQUAL(proportional_workload2[i], distribution1->proportional_workload[i], 0.005);
+		total += proportional_workload2[i];
 	}
 	CU_ASSERT_DOUBLE_EQUAL(distribution1->total, total, 0.005);
 }
@@ -73,35 +73,35 @@ void test_get_total(void)
 
 void test_redistribute_remainder(void)
 {
-	double * old_ratios = distribution1->ratios;
+	double * old_proportional_workload = distribution1->proportional_workload;
 
-	double ratios3[4] = {0.2, 0.10, 0.38, 0.37};
-	distribution1->ratios = ratios3;
+	double proportional_workload3[4] = {0.2, 0.10, 0.38, 0.37};
+	distribution1->proportional_workload = proportional_workload3;
 	distribution1->excess = 5;
 	distribution1->redistribute_remainder(distribution1);
 
-	CU_ASSERT_DOUBLE_EQUAL(0.19, distribution1->ratios[0], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.08, distribution1->ratios[1], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.37, distribution1->ratios[2], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.36, distribution1->ratios[3], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.19, distribution1->proportional_workload[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.08, distribution1->proportional_workload[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.37, distribution1->proportional_workload[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.36, distribution1->proportional_workload[3], 0.005);
 
-	double ratios4[4] = {0.10, 0.15, 0.36, 0.34};
-	distribution1->ratios = ratios4;
+	double proportional_workload4[4] = {0.10, 0.15, 0.36, 0.34};
+	distribution1->proportional_workload = proportional_workload4;
 	distribution1->excess = -5;
 	distribution1->redistribute_remainder(distribution1);
-	CU_ASSERT_DOUBLE_EQUAL(0.11, distribution1->ratios[0], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.16, distribution1->ratios[1], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.38, distribution1->ratios[2], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.35, distribution1->ratios[3], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.11, distribution1->proportional_workload[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.16, distribution1->proportional_workload[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.38, distribution1->proportional_workload[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.35, distribution1->proportional_workload[3], 0.005);
 
-	distribution1->ratios = old_ratios;
-	old_ratios = 0;
+	distribution1->proportional_workload = old_proportional_workload;
+	old_proportional_workload = 0;
 }
 
 void test_destructor(void)
 {
 	_delete(distribution1);
-	CU_ASSERT_EQUAL(distribution1->ratios, 0);
+	CU_ASSERT_EQUAL(distribution1->proportional_workload, 0);
 	CU_ASSERT_EQUAL(distribution1->total, 0);
 	CU_ASSERT_EQUAL(distribution1->num_procs, 0);
 }
@@ -128,7 +128,7 @@ int main()
 
    /* add the tests to the suite */
    if ((NULL == CU_add_test(pSuite, "test of distribution constructor()", test_constructor)) ||
-	   (NULL == CU_add_test(pSuite, "test of distribution set_ratios()", test_set_ratios)) ||
+	   (NULL == CU_add_test(pSuite, "test of distribution set_proportional_workload()", test_set_proportional_workload)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution get_num_procs()", test_get_num_procs)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution get_total()", test_get_total)) ||
 	   (NULL == CU_add_test(pSuite, "test of distribution redistribute_remainder()", test_redistribute_remainder)) ||

@@ -8,7 +8,6 @@
  *
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
-
 #include "CUnit/Basic.h"
 #include "ullmf_measurement_device_eml.h"
 #include "ullmf_measurement_device.h"
@@ -18,7 +17,7 @@
 
 int init_suite1(void)
 {
-   return 0;
+	return 0;
 }
 
 
@@ -48,20 +47,50 @@ void test_shutdown(void)
 void test_measurement_start(void)
 {
     enum ullmf_measurement_error error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
-    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
-    CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
-    error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
-    CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
+    if (ullmf_eml_device.ndevices > 0) {
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.interval_calc_started, true);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 1);
+    	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
+    	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+    	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 1);
+    } else {
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+    	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR);
+    }
 }
 
 
 void test_measurement_stop(void)
 {
     sleep(1);
+    // Measurement calibration interval
     enum ullmf_measurement_error error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-    CU_ASSERT(ullmf_eml_device.parent.measurement >= 0);
-    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
+    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+    for (int i = ullmf_eml_device.current_it; i < ullmf_eml_device.internal_calibration_interval; i++) {
+    	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+    	CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+    	error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+		CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+    }
+    // Real Measurement
+    error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+    sleep(1);
+    error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+    for (int i = ullmf_eml_device.current_it; i < ullmf_eml_device.measurement_interval; i++) {
+    	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+    	CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+    	error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+		CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+    }
+	CU_ASSERT(ullmf_eml_device.parent.measurement > 1e-9);
+    // Testing measurement_stop behavior when start is not called
     error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
     CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_NOT_STARTED);
 }
@@ -71,8 +100,9 @@ void test_measurement_stop(void)
  * Returns a CUE_SUCCESS on successful running, another
  * CUnit error code on failure.
  */
-int main()
+int main(int argc, char** argv)
 {
+   MPI_Init(&argc, &argv);
    CU_pSuite pSuite = NULL;
 
    /* initialize the CUnit test registry */

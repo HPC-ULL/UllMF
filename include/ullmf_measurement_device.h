@@ -24,7 +24,7 @@ enum ullmf_measurement_error {
     ULLMF_MEASUREMENT_STARTED,
     ULLMF_MEASUREMENT_NOT_STARTED,
     ULLMF_MEASUREMENT_WRONG_CLASS,
-    ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR
+    ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR,
 };
 
 typedef struct measurement_device measurement_device_t;

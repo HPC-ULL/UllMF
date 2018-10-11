@@ -57,6 +57,9 @@ struct ullmf_strategy_heuristic {
 	/** Threshold to stop the heuristic search */
 	double search_threshold;
 
+	/** Did I find a solution to move in the last iteration */
+	bool moved;
+
 	/** Inversion mechanism for last movement */
 	bool tried_inversion;
 
@@ -68,16 +71,32 @@ struct ullmf_strategy_heuristic {
 
     /** Heuristic population evaluation */
     double (*evalue_workload_distribution)(ullmf_calibration_t* calib,
-    									   int* candidate_counts, double* resource_ratios);
+    									ullmf_workload_t* candidate_counts, double* resource_ratios);
 };
 
-double _ullmf_evalue_sum(ullmf_calibration_t* calib,
-						 int* candidate_counts, double* resource_ratios);
 
-double _ullmf_evalue_max(ullmf_calibration_t* calib,
-						 int* candidate_counts, double* resource_ratios);
+double ullmf_evalue_sum(ullmf_calibration_t* calib,
+						ullmf_workload_t* candidate, double* resource_ratios);
 
-int _ullmf_heuristic_calibrate(ullmf_calibration_t* calib);
+double ullmf_evalue_max(ullmf_calibration_t* calib,
+						ullmf_workload_t* candidate, double* resource_ratios);
+
+bool is_movement_legal(double current_ratio, double ratio_step, int direction);
+
+double get_resource_ratio(double resource_consumption, int counts);
+
+ullmf_workload_t * move_workload(ullmf_calibration_t* calib, int process, int direction);
+
+int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t*** candidates);
+
+void free_distributions(int num_candidates, ullmf_workload_t*** candidates);
+
+void heuristic_search(ullmf_calibration_t* calib);
+
+int ullmf_heuristic_calibrate(ullmf_calibration_t* calib);
+
+
+
 
 
 #ifdef __cplusplus

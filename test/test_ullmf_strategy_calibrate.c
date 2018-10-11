@@ -56,8 +56,8 @@ void test_calibrate(void)
 
 	CU_ASSERT_EQUAL(distr->get_num_procs(distr), 2);
 	CU_ASSERT_DOUBLE_EQUAL(distr->get_total(distr), 1, 0.0001);
-	CU_ASSERT_DOUBLE_EQUAL(distr->ratios[0], 0.25, 0.0001);
-	CU_ASSERT_DOUBLE_EQUAL(distr->ratios[1], 0.75, 0.0001);
+	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.25, 0.0001);
+	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.75, 0.0001);
 
 	_delete(distr);
 }

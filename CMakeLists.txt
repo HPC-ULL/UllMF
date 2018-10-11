@@ -7,6 +7,12 @@ include(CTest)
 configure_file(config/ullmfConfig.h.in include/ullmfConfig.h @ONLY)
 configure_file(config/ullmf.pc.in ullmf.pc @ONLY)
 
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
+)
+
+
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/config")
 
@@ -22,10 +28,9 @@ set(sources
   ullmf_strategy_heuristic_time.c
   ullmf_workload.c
   ullmf_timer.c
+  ullmf_utils.c
   ullmf.c
 )
-
-set (CMAKE_MODULE_PATH module_path)
 
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})

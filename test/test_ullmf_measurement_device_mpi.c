@@ -14,8 +14,6 @@
 #include "ullmf_measurement_device.h"
 #include <unistd.h>
 
-extern measurement_device_mpi_t ullmf_mpi_device;
-
 
 int init_suite1(void)
 {

@@ -9,6 +9,7 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
+#include "debug.h"
 #include "ullmf_measurement_device.h"
 #include "ullmf_measurement_device_mpi.h"
 #include <mpi.h>
@@ -17,6 +18,7 @@
 
 // TODO change to variable number of arguments
 static enum ullmf_measurement_error init(void* self) {
+	//dbglog_info("ullmf_measurement_device_mpi init\n");
     if (class_typecheck(self, ullmf_mpi_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     return ULLMF_MEASUREMENT_SUCCESS;
@@ -29,13 +31,15 @@ static enum ullmf_measurement_error shutdown(void* self) {
 }
 
 static enum ullmf_measurement_error measurement_start(void* self) {
-    // Do nothing
     if (class_typecheck(self, ullmf_mpi_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     struct measurement_device_mpi * self_md_mpi = (struct measurement_device_mpi *) self;
+	//dbglog_info("ullmf_measurement_device_mpi->measurement_start\n");
     if (self_md_mpi->parent.measuring) {
+    	//dbglog_info("  Measurement in progress\n");
         return ULLMF_MEASUREMENT_STARTED;
     } else {
+    	//dbglog_info("  Starting measurement\n");
         self_md_mpi->parent.measurement = MPI_Wtime();
         self_md_mpi->parent.measuring = true;
     }
@@ -47,10 +51,13 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     if (class_typecheck(self, ullmf_mpi_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     struct measurement_device_mpi * self_md_mpi = (struct measurement_device_mpi *) self;
+    //dbglog_info("ullmf_measurement_device_mpi->measurement_start\n");
     if (self_md_mpi->parent.measuring) {
         self_md_mpi->parent.measurement = MPI_Wtime() - self_md_mpi->parent.measurement;
+        //dbglog_info("  Finishing Measurement: %.4f\n", self_md_mpi->parent.measurement);
         self_md_mpi->parent.measuring = false;
     } else {
+    	//dbglog_info("  Measurement not initialized\n");
         return ULLMF_MEASUREMENT_NOT_STARTED;
     }
     return ULLMF_MEASUREMENT_SUCCESS;

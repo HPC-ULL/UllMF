@@ -13,6 +13,7 @@
 #include "ullmf_measurement_device_eml.h"
 #include "ullmf_class_utils.h"
 #include "ullmf_timer.h"
+#include "debug.h"
 #include <mpi.h>
 #include <eml.h>
 #include <eml/data.h>
@@ -25,10 +26,6 @@
 #define INTERNAL_REFRESH_INTERVAL 5
 
 static enum ullmf_measurement_error get_eml_measurements(struct measurement_device_eml * md_eml) {
-    if (!md_eml->parent.measuring) {
-        return ULLMF_MEASUREMENT_NOT_STARTED;
-    }
-
     emlData_t* data[md_eml->ndevices];
     md_eml->err = emlStop(data);
     if (md_eml->err != EML_SUCCESS)
@@ -43,7 +40,7 @@ static enum ullmf_measurement_error get_eml_measurements(struct measurement_devi
         emlDeviceByIndex(i, &dev);
         emlDeviceGetName(dev, &devname);
 
-        if (strstr(devname, ullmf_eml_all_devices) || strstr(devname, md_eml->device)) {
+        if (strstr(md_eml->device, ullmf_eml_all_devices) || strstr(devname, md_eml->device)) {
             md_eml->err = emlDataGetConsumed(data[i], &consumed);
             if (md_eml->err != EML_SUCCESS)
                 return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
@@ -92,14 +89,16 @@ static enum ullmf_measurement_error shutdown(void* self) {
         return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
 
     self_md_eml->ndevices = -1;
-    enum ullmf_measurement_error err = get_eml_measurements(self_md_eml);
-    return err;
+    return ULLMF_MEASUREMENT_SUCCESS;
 }
 
 static enum ullmf_measurement_error measurement_start(void* self) {
     if (class_typecheck(self, ullmf_eml_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     struct measurement_device_eml * self_md_eml = (struct measurement_device_eml *) self;
+    if (self_md_eml->parent.measuring) {
+        return ULLMF_MEASUREMENT_STARTED;
+    }
     if (self_md_eml->ndevices > 0) {
         if (self_md_eml->measurement_interval != 0 &&
         		self_md_eml->current_it == 0) {
@@ -112,10 +111,14 @@ static enum ullmf_measurement_error measurement_start(void* self) {
             	self_md_eml->interval_calc_started = true;
             	self_md_eml->first_calibration_t = millitimestamp();
             }
+            self_md_eml->parent.measuring = true;
         }
     	self_md_eml->current_it++;
     } else {
-        return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
+    	if (self_md_eml->ndevices == 0) {
+    		dbglog_warn("No EML measurement devices found.\n");
+    	}
+    	return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
     }
     return ULLMF_MEASUREMENT_SUCCESS;
 }
@@ -123,10 +126,12 @@ static enum ullmf_measurement_error measurement_start(void* self) {
 static enum ullmf_measurement_error calculate_measurement_interval(measurement_device_eml_t* self) {
 	self->first_calibration_t = millitimestamp() - self->first_calibration_t;
 	unsigned long long iteration_time = self->first_calibration_t / self->internal_calibration_interval;
-	self->measurement_interval = floor(self->measurement_time_interval / iteration_time);
+	self->measurement_interval = self->measurement_time_interval / iteration_time;
+
 	if (!self->measurement_interval)
 		self->measurement_interval = 1;
-	MPI_Allreduce(&self->measurement_interval, &self->measurement_interval, 1, MPI_INT, MPI_MAX, self->eml_comm);
+	MPI_Allreduce(&self->measurement_interval, &self->measurement_interval, 1, MPI_INT,
+			MPI_MAX, self->eml_comm);
 	return ULLMF_MEASUREMENT_SUCCESS;
 }
 
@@ -134,15 +139,17 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     if (class_typecheck(self, ullmf_eml_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     measurement_device_eml_t* self_md_eml = (measurement_device_eml_t *) self;
-    // Checks if measurement_start has been called
     enum ullmf_measurement_error err = ULLMF_MEASUREMENT_SUCCESS;
+    if (!self_md_eml->parent.measuring) {
+    	return ULLMF_MEASUREMENT_NOT_STARTED;
+    }
+	self_md_eml->parent.measuring = false;
     // self_md_eml->current_it always >= 0 && self_md_eml->measurement_interval == 0 only on startup
     if (self_md_eml->measurement_interval == self_md_eml->current_it) {
     	err = get_eml_measurements(self_md_eml);
     	if (err != ULLMF_MEASUREMENT_SUCCESS)
     		return err;
     	self_md_eml->current_it = 0;
-    	self_md_eml->parent.measuring = false;
     	// TODO Measurement refresh
     	/*
     	 * calib->energy->last_refresh--;
@@ -157,17 +164,18 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
             }
     	 */
     } else {
-    	if (self_md_eml->current_it == self_md_eml->internal_calibration_interval) {
+    	if (self_md_eml->current_it % self_md_eml->internal_calibration_interval == 0) {
     		err = calculate_measurement_interval(self_md_eml);
-    		self_md_eml->current_it = 0;
+        	self_md_eml->current_it = 0;
     	}
     }
+
     return err;
 }
 
 measurement_device_eml_t ullmf_eml_device = {
         .parent._class.name = ullmf_eml_class,
-        .parent.measuring = 0,
+        .parent.measuring = false,
         .parent.measurement = .0,
         .parent.unit = "None",
         .parent.init = &init,

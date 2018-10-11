@@ -69,9 +69,9 @@ void test_redistribute(void)
 	total = 11000;
 	int counts2[4] = {3000, 3000, 3000, 2000};
 	int displs2[4] = {0, 3000, 6000, 9000};
-	double ratios2[4] = {0.09, 0.2, 0.30, 0.40};
+	double proportional_workload2[4] = {0.09, 0.2, 0.30, 0.40};
 	calib.workload->set_workload(calib.workload, counts2, displs2);
-	new_distribution->set_ratios(new_distribution, ratios2);
+	new_distribution->set_proportional_workload(new_distribution, proportional_workload2);
 
 	calib.strategy->redistribute(&calib);
 	CU_ASSERT_EQUAL(calib.workload->counts[0] % blocksize, 0);
