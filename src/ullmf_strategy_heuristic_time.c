@@ -39,6 +39,8 @@ static ullmf_strategy_heuristic_time_t _ullmf_strategy_heuristic_time = {
 	.parent.search_distance = _starting_search_distance,
 	.parent.reset_search_distance = _restarting_search_distance,
 	.parent.search_threshold = _search_threshold,
+	.parent.tried_inversion = false,
+    .parent.moved = false,
 };
 
 ullmf_strategy_t * ullmf_strategy_heuristic_time = (ullmf_strategy_t *) &_ullmf_strategy_heuristic_time;

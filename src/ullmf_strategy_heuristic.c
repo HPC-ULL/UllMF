@@ -127,6 +127,12 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 
 void heuristic_search(ullmf_calibration_t* calib) {
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
+	// TODO Inversion if last solution is better than current one
+	if (heuristic->moved && !heuristic->tried_inversion) {
+		heuristic->tried_inversion = true;
+		// TODO try invert
+		return;
+	}
 
 	// Calculate resources per unit of work
 	double * resource_ratios = calloc(calib->num_procs, sizeof(double));
@@ -140,8 +146,10 @@ void heuristic_search(ullmf_calibration_t* calib) {
     // Evaluate heuristic population
 	if (calib->strategy->best_candidate != 0)
 		_delete(calib->strategy->best_candidate);
+
     calib->strategy->best_candidate = _new(Distribution, calib->num_procs, calib->workload->proportional_workload);
 	heuristic->moved = false;
+    heuristic->tried_inversion = false;
     double best_consumption = heuristic->evalue_workload_distribution(calib, calib->workload, resource_ratios);
     double candidate_consumption;
     for (int i = 0; i < num_candidates; i++) {
@@ -154,14 +162,13 @@ void heuristic_search(ullmf_calibration_t* calib) {
     	}
     }
 
+    heuristic->search_distance /= 2;
     free_distributions(num_candidates, &candidates);
     free(resource_ratios);
 }
 
 
 int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
-	dbglog_info("[id = %d] _ullmf_heuristic_calibrate\n", calib->id);
-
 	if (calib->strategy->mdevice->measuring) // Energy measurements require time
 		return ULLMF_TAG_CALIBRATED;
 
@@ -170,12 +177,13 @@ int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 		//Probability
 		if (heuristic->moved && !heuristic->tried_inversion) {
 			heuristic->tried_inversion = true;
+			// TODO try invert
+			return ULLMF_TAG_RECALIBRATING;
 		} else {
-			double reset = (double)(random() % 10000) / 100; // TODO change to int logic
+			double reset = (double)(random() % 10000) / 10000; // TODO change to int logic
 			if (reset < heuristic->reset_probability) {
 				heuristic->search_distance = heuristic->reset_search_distance;
 				heuristic->reset_probability = heuristic->initial_reset_probability;
-				// TODO Inversion on last reset
 			} else {
 				heuristic->reset_probability += heuristic->reset_probability_increment;
 				return ULLMF_TAG_CALIBRATED;
