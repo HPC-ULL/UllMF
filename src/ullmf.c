@@ -43,9 +43,8 @@ static void calibrate(ullmf_calibration_t * calib) {
 }
 
 enum ullmf_error ullmf_mpi_init(ullmf_calibration_t * const calib) {
-	dbglog_info("[id = %d] ullmf_mpi_init\n", calib->id);
-	calib->strategy->mdevice->init(calib->strategy->mdevice);
-    return ULLMF_SUCCESS;
+	enum ullmf_error error = calib->strategy->mdevice->init(calib->strategy->mdevice);
+    return error;
 }
 
 enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t * const calib) {

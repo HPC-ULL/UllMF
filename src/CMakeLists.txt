@@ -9,10 +9,6 @@ if (MPI_FOUND)
   target_link_libraries(ullmf ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-  add_definitions(-DDEBUG)
-endif()
-
 set_target_properties(ullmf PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1

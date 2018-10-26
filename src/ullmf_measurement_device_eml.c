@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 
-#define INTERNAL_CALIBRATION_INTERVAL 10
+#define INTERNAL_CALIBRATION_INTERVAL 1
 #define MEASUREMENT_TIME_INTERVAL 200 // 200 ms
 #define INTERNAL_REFRESH_INTERVAL 5
 
@@ -39,7 +39,6 @@ static enum ullmf_measurement_error get_eml_measurements(struct measurement_devi
         double consumed;
         emlDeviceByIndex(i, &dev);
         emlDeviceGetName(dev, &devname);
-
         if (strstr(md_eml->device, ullmf_eml_all_devices) || strstr(devname, md_eml->device)) {
             md_eml->err = emlDataGetConsumed(data[i], &consumed);
             if (md_eml->err != EML_SUCCESS)
@@ -56,7 +55,6 @@ static enum ullmf_measurement_error get_eml_measurements(struct measurement_devi
     md_eml->err = emlDataFree(*data);
     if (md_eml->err != EML_SUCCESS)
         return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
-
     return ULLMF_MEASUREMENT_SUCCESS;
 }
 
@@ -67,9 +65,8 @@ static enum ullmf_measurement_error init(void* self) {
     struct measurement_device_eml * self_md_eml = (struct measurement_device_eml *) self;
 
     self_md_eml->err = emlInit();
-    if (self_md_eml->err != EML_SUCCESS)
+    if (self_md_eml->err != EML_SUCCESS && self_md_eml->err != EML_ALREADY_INITIALIZED)
         return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
-
     self_md_eml->err = emlDeviceGetCount(&self_md_eml->ndevices);
     if (self_md_eml->err != EML_SUCCESS)
         return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;

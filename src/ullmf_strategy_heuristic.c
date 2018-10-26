@@ -91,7 +91,6 @@ ullmf_workload_t * move_workload(ullmf_calibration_t* calib, int process, int di
 
 
 int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t*** candidates) {
-
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	int num_candidates = calib->num_procs * 2; // TODO substitution for parametric value heuristic size
                                                	   // should be included inside heuristic constructor
@@ -110,7 +109,6 @@ int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t*** candi
 			switch_direction = 0;
 			direction = -direction;
 		}
-
 	}
 
 	return current_candidate;
@@ -126,6 +124,8 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 
 
 void heuristic_search(ullmf_calibration_t* calib) {
+	ullmf_dbglog_info("[id = %d] heuristic_search\n", calib->id);
+
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	// TODO Inversion if last solution is better than current one
 	if (heuristic->moved && !heuristic->tried_inversion) {
@@ -133,15 +133,19 @@ void heuristic_search(ullmf_calibration_t* calib) {
 		// TODO try invert
 		return;
 	}
-
+	dbglog_info("    resource-ratios: ");
 	// Calculate resources per unit of work
 	double * resource_ratios = calloc(calib->num_procs, sizeof(double));
-    for (int i = 0; i < calib->num_procs; i++)
+    for (int i = 0; i < calib->num_procs; i++) {
     	resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]);
+    	dbglog_append(" " DBG_FMT, resource_ratios[i]);
+    }
+    dbglog_append("\n");
 
     // Generate heuristic population of candidates
     ullmf_workload_t ** candidates;
     int num_candidates = generate_distributions(calib, &candidates);
+    dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
 
     // Evaluate heuristic population
 	if (calib->strategy->best_candidate != 0)

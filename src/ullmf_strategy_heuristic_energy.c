@@ -23,7 +23,7 @@
 #define _energy_reset_increment 0.02
 #define _starting_search_distance 0.25
 #define _restarting_search_distance 0.12
-#define _search_threshold 0.02
+#define _search_threshold 0.001
 
 static ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
     .parent.parent._class.size = sizeof(ullmf_strategy_heuristic_energy_t),
