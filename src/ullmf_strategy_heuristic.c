@@ -124,7 +124,7 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 
 
 void heuristic_search(ullmf_calibration_t* calib) {
-	ullmf_dbglog_info("[id = %d] heuristic_search\n", calib->id);
+	dbglog_info("[id = %d] heuristic_search\n", calib->id);
 
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	// TODO Inversion if last solution is better than current one

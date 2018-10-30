@@ -16,9 +16,9 @@
 
 #endif //NDEBUG
 
-#define dbglog_error(...)  ULLMFDBGLOG("ERROR", __VA_ARGS__, '\0')
-#define dbglog_warn(...)   ULLMFDBGLOG("WARN", __VA_ARGS__, '\0')
-#define dbglog_info(...)   ULLMFDBGLOG("INFO", __VA_ARGS__, '\0')
-#define dbglog_append(...) ULLMFDBGLOG2(__VA_ARGS__, '\0')
+#define dbglog_error(...)  DBGLOG("ERROR", __VA_ARGS__, '\0')
+#define dbglog_warn(...)   DBGLOG("WARN", __VA_ARGS__, '\0')
+#define dbglog_info(...)   DBGLOG("INFO", __VA_ARGS__, '\0')
+#define dbglog_append(...) DBGLOG2(__VA_ARGS__, '\0')
 
 #endif //ULLMF_DEBUG_H
