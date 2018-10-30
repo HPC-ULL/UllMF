@@ -4,10 +4,7 @@ if (EML)
   target_link_libraries(ullmf eml confuse) 
 endif(EML)
 
-find_package(MPI)
-if (MPI_FOUND)
-  target_link_libraries(ullmf ${MPI_C_LIBRARIES})
-endif(MPI_FOUND)
+target_link_libraries(ullmf ${MPI_LIBRARIES})
 
 set_target_properties(ullmf PROPERTIES
     VERSION ${PROJECT_VERSION}
