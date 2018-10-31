@@ -6,7 +6,7 @@
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * File: ullmf_calibation.h
+ * File: ullmf_calibration.h
  * Date: 20 jun. 2018
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
@@ -22,6 +22,8 @@ typedef struct ullmf_calibration ullmf_calibration_t;
 #include "ullmf_class_utils.h"
 #include "ullmf_strategy.h"
 #include "ullmf_workload.h"
+
+#define ullmf_calibration_class "ullmf_calibration"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,6 +49,7 @@ struct ullmf_calibration {
     MPI_Comm comm; // MPI communicator
 };
 
+extern const void * Ullmf_calibration;
 
 #ifdef __cplusplus
 }

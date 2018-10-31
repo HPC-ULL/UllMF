@@ -69,14 +69,17 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
         const int root,
         const MPI_Comm comm) {
 
-    ullmf_calibration_t* const calib = malloc(sizeof(*calib));
-    MPI_Comm_size(comm, &calib->num_procs);
-    MPI_Comm_rank(comm, &calib->id);
-    calib->comm = comm;
-    calib->root = root;
+    ullmf_calibration_t* const calib = malloc(((class_t *) Ullmf_calibration)->size);
+    calib->_class = *((class_t *) Ullmf_calibration);
     calib->strategy = strategy;
     calib->workload = _new(Workload, calib->num_procs, counts, displs, blocksize);
+
     calib->measurements = malloc(calib->num_procs * sizeof(double));
+    MPI_Comm_size(comm, &calib->num_procs);
+    MPI_Comm_rank(comm, &calib->id);
+    calib->root = root;
+    calib->started = false;
+    calib->comm = comm;
 
 	dbglog_info("ullmf_mpi_setup\n");
 	dbglog_info("   Strategy: %p\n", calib->strategy);
@@ -111,7 +114,7 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
 	dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
     if (!calib->started) {
-    	dbglog_append(" NOT STARTED; \n", calib->id);
+    	dbglog_append(" NOT STARTED; \n");
         return ULLMF_NOT_STARTED;
     }
     dbglog_append("\n");

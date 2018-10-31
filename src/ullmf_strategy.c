@@ -17,8 +17,8 @@
 #include "debug.h"
 
 #include <math.h>
-
 #include <stdio.h>
+
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib) {
 	dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
 

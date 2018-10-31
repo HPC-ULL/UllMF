@@ -17,19 +17,20 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/config")
 
 set(sources
-  ullmf_class_utils.c
-  ullmf_distribution.c
-  ullmf_measurement_device.c
-  ullmf_measurement_device_dummy.c
-  ullmf_measurement_device_mpi.c
-  ullmf_strategy.c
-  ullmf_strategy_calibrate.c
-  ullmf_strategy_heuristic.c
-  ullmf_strategy_heuristic_time.c
-  ullmf_workload.c
-  ullmf_timer.c
-  ullmf_utils.c
-  ullmf.c
+	ullmf_calibration.c
+	ullmf_class_utils.c
+	ullmf_distribution.c
+	ullmf_measurement_device.c
+	ullmf_measurement_device_dummy.c
+	ullmf_measurement_device_mpi.c
+	ullmf_strategy.c
+	ullmf_strategy_calibrate.c
+	ullmf_strategy_heuristic.c
+	ullmf_strategy_heuristic_time.c
+	ullmf_workload.c
+	ullmf_timer.c
+	ullmf_utils.c
+	ullmf.c
 )
 
 find_package(MPI REQUIRED)
