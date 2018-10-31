@@ -27,10 +27,11 @@ enum ullmf_error {
     ULLMF_ALREADY_STARTED,
     ULLMF_NOT_STARTED,
     ULLMF_INVALID_PARAMETER,
+	ULLMF_NOT_INITIALIZED,
     ULLMF_UNSUPPORTED,
 };
 
-enum ullmf_error ullmf_mpi_init();
+enum ullmf_error ullmf_mpi_init(ullmf_calibration_t* calib);
 enum ullmf_error ullmf_mpi_shutdown(ullmf_calibration_t* calib);
 
 enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t** const new_calib,

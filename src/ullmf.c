@@ -43,7 +43,12 @@ static void calibrate(ullmf_calibration_t * calib) {
 }
 
 enum ullmf_error ullmf_mpi_init(ullmf_calibration_t * const calib) {
-	enum ullmf_error error = calib->strategy->mdevice->init(calib->strategy->mdevice);
+	enum ullmf_error error;
+	if (calib) {
+		error = calib->strategy->mdevice->init(calib->strategy->mdevice);
+	} else {
+		return ULLMF_NOT_INITIALIZED;
+	}
     return error;
 }
 
