@@ -14,7 +14,7 @@
 #ifndef ULLMF_STRATEGY_H
 #define ULLMF_STRATEGY_H
 
-typedef struct ullmf_strategy ullmf_strategy_t; // Don't move this line. It avoids a circular inclusion
+typedef struct ullmf_strategy ullmf_strategy_t; // Don't move this statement. It avoids a circular dependency
 
 #include "ullmf_class_utils.h"
 #include "ullmf_calibration.h"
