@@ -23,13 +23,17 @@
 
 static void calibrate(ullmf_calibration_t * calib) {
     // TODO Optimize
+	dbglog_info("[id = %d] calibrate: ", calib->id);
     if (calib->id == calib->root) {
         const int tag = calib->strategy->calibrate(calib);
-        if (tag == ULLMF_TAG_RECALIBRATING)
+        if (tag == ULLMF_TAG_RECALIBRATING) {
+        	dbglog_append(" Redistributing Workload\n");
         	calib->strategy->redistribute(calib);
+        }
         for (int i = 0; i < calib->num_procs; i++)
             MPI_Send(NULL, 0, MPI_BYTE, i, tag, calib->comm);
     }
+	dbglog_append("\n");
 
     MPI_Status status;
     MPI_Recv(NULL, 0, MPI_BYTE, calib->root, MPI_ANY_TAG, calib->comm, &status);
@@ -93,9 +97,12 @@ enum ullmf_error ullmf_mpi_free(ullmf_calibration_t * const calib) {
 }
 
 enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
-	dbglog_info("[id = %d] ullmf_mpi_start\n", calib->id);
-    if (calib->started)
+	dbglog_info("[id = %d] ullmf_mpi_start", calib->id);
+    if (calib->started) {
+    	dbglog_append(" ALREADY STARTED; \n");
         return ULLMF_ALREADY_STARTED;
+    }
+    dbglog_append("\n");
     calib->started = true;
     calib->strategy->mdevice->measurement_start(calib->strategy->mdevice);
     return ULLMF_SUCCESS;
@@ -103,8 +110,11 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
 	dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
-    if (!calib->started)
+    if (!calib->started) {
+    	dbglog_append(" NOT STARTED; \n", calib->id);
         return ULLMF_NOT_STARTED;
+    }
+    dbglog_append("\n");
 
     calib->strategy->mdevice->measurement_stop(calib->strategy->mdevice);
     calib->measurements[calib->id] = calib->strategy->mdevice->measurement;
