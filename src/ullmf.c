@@ -72,19 +72,19 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
     ullmf_calibration_t* const calib = malloc(((class_t *) Ullmf_calibration)->size);
     calib->_class = *((class_t *) Ullmf_calibration);
     calib->strategy = strategy;
-    calib->workload = _new(Workload, calib->num_procs, counts, displs, blocksize);
-
-    calib->measurements = malloc(calib->num_procs * sizeof(double));
     MPI_Comm_size(comm, &calib->num_procs);
     MPI_Comm_rank(comm, &calib->id);
+
+    calib->workload = _new(Workload, calib->num_procs, counts, displs, blocksize);
+    calib->measurements = malloc(calib->num_procs * sizeof(double));
     calib->root = root;
     calib->started = false;
     calib->comm = comm;
 
-	dbglog_info("ullmf_mpi_setup\n");
-	dbglog_info("   Strategy: %p\n", calib->strategy);
-	dbglog_info("     Name: %s\n", calib->strategy->_class.name);
-	dbglog_info("     Device: %s\n", calib->strategy->mdevice->_class.name);
+    dbglog_info("ullmf_mpi_setup\n");
+    dbglog_info("   Strategy: %p\n", calib->strategy);
+    dbglog_info("     Name: %s\n", calib->strategy->_class.name);
+    dbglog_info("     Device: %s\n", calib->strategy->mdevice->_class.name);
 
     *new_calib = calib;
     return ULLMF_SUCCESS;
