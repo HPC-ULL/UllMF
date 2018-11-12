@@ -43,6 +43,10 @@ struct measurement_device_eml {
 
     unsigned long long measurement_time_interval;
 
+    unsigned long long next_start;
+
+    unsigned long long next_stop;
+
     size_t current_it;
 
     unsigned long long first_calibration_t;

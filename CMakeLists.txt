@@ -12,6 +12,9 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
 )
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=c99)
+endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/config")

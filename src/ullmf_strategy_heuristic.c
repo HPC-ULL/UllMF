@@ -138,14 +138,17 @@ void heuristic_search(ullmf_calibration_t* calib) {
 	double * resource_ratios = calloc(calib->num_procs, sizeof(double));
     for (int i = 0; i < calib->num_procs; i++) {
     	resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]);
-    	dbglog_append(" " DBG_FMT, resource_ratios[i]);
+    	dbglog_append(" (%.4f / %d) " DBG_FMT, calib->measurements[i], calib->workload->counts[i], resource_ratios[i]);
+    	if (resource_ratios[i] < 1e-6) {
+    	    dbglog_warn( "BAD RESOURCE RATIO FOR PROCESS %d", i);
+    	}
     }
     dbglog_append("\n");
 
     // Generate heuristic population of candidates
     ullmf_workload_t ** candidates;
     int num_candidates = generate_distributions(calib, &candidates);
-    dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
+    dbglog_info("    Num-Candidates: %d\n", num_candidates);
 
     // Evaluate heuristic population
 	if (calib->strategy->best_candidate != 0)
@@ -158,12 +161,15 @@ void heuristic_search(ullmf_calibration_t* calib) {
     double candidate_consumption;
     for (int i = 0; i < num_candidates; i++) {
     	candidate_consumption = heuristic->evalue_workload_distribution(calib, candidates[i], resource_ratios);
+        dbglog_info("     Candidate %02d: %.6f", i, candidate_consumption);
     	if (candidate_consumption < best_consumption) {
+            dbglog_append(" (Moving) ");
     		heuristic->moved = true;
-    		candidate_consumption = best_consumption;
+    		best_consumption = candidate_consumption;
     		calib->strategy->best_candidate->set_proportional_workload(
     				calib->strategy->best_candidate, candidates[i]->proportional_workload);
     	}
+        dbglog_append("\n");
     }
 
     heuristic->search_distance /= 2;
@@ -173,21 +179,24 @@ void heuristic_search(ullmf_calibration_t* calib) {
 
 
 int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
-	if (calib->strategy->mdevice->measuring) // Energy measurements require time
+	if (calib->strategy->mdevice->measuring) { // Energy measurements require time
 		return ULLMF_TAG_CALIBRATED;
+	}
 
 	ullmf_strategy_heuristic_t* heuristic = (ullmf_strategy_heuristic_t*) calib->strategy;
 	if (heuristic->search_distance < heuristic->search_threshold) {
 		//Probability
 		if (heuristic->moved && !heuristic->tried_inversion) {
 			heuristic->tried_inversion = true;
+			dbglog_info("  Trying Heuristic Inversion before reset (TODO) \n");
 			// TODO try invert
 			return ULLMF_TAG_RECALIBRATING;
 		} else {
-			double reset = (double)(random() % 10000) / 10000; // TODO change to int logic
+			double reset = (double)(rand() % 10000) / 10000; // TODO change to int logic
 			if (reset < heuristic->reset_probability) {
 				heuristic->search_distance = heuristic->reset_search_distance;
 				heuristic->reset_probability = heuristic->initial_reset_probability;
+	            dbglog_info("  Heuristic Reset \n");
 			} else {
 				heuristic->reset_probability += heuristic->reset_probability_increment;
 				return ULLMF_TAG_CALIBRATED;

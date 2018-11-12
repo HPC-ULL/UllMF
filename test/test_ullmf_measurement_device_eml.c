@@ -50,11 +50,11 @@ void test_measurement_start(void)
     if (ullmf_eml_device.ndevices > 0) {
     	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
     	CU_ASSERT_EQUAL(ullmf_eml_device.interval_calc_started, true);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 1);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 0);
     	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
     	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
     	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 1);
+    	CU_ASSERT_EQUAL(ullmf_eml_device.current_it, 0); // Current it managed by stop
     } else {
     	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
     	CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR);
@@ -64,35 +64,71 @@ void test_measurement_start(void)
 
 void test_measurement_stop(void)
 {
-    sleep(1);
     // Measurement calibration interval
     enum ullmf_measurement_error error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-    CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
-    CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
-    for (int i = ullmf_eml_device.current_it; i < ullmf_eml_device.internal_calibration_interval; i++) {
-    	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
-    	CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
-    	error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-		CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+    if (ullmf_eml_device.ndevices > 0) {
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_RUNNING);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+
+        int interval_end = ullmf_eml_device.internal_calibration_interval;
+        for (int i = ullmf_eml_device.current_it;
+             !((ullmf_eml_device.current_it % interval_end) == interval_end - 2); i++) {
+            error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+            CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_STARTED);
+            CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+            error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+            CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_RUNNING);
+            CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+        }
+        sleep(1);
+
+        // Real Measurement
+        error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+
+        error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+        CU_ASSERT_NOT_EQUAL(ullmf_eml_device.measurement_interval, 0);
+        CU_ASSERT_EQUAL(ullmf_eml_device.next_stop,
+                ullmf_eml_device.measurement_interval + ullmf_eml_device.internal_calibration_interval - 1);
+        CU_ASSERT_EQUAL(ullmf_eml_device.next_start, ullmf_eml_device.internal_calibration_interval - 1);
+
+        error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+        error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_RUNNING);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+
+        if (ullmf_eml_device.measurement_interval > 2) {
+            interval_end = ullmf_eml_device.next_stop;
+            for (int i = ullmf_eml_device.current_it;
+                 !((ullmf_eml_device.current_it % interval_end) == interval_end - 2); i++) {
+                error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+                CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
+                CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+                error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+                CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_RUNNING);
+                CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+            }
+        }
+        sleep(1);
+
+        error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_STARTED);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
+        error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_SUCCESS);
+        CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
+        CU_ASSERT(ullmf_eml_device.parent.measurement > 1e-9);
+        // Testing measurement_stop behavior when start is not called
+        error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_NOT_STARTED);
+    } else {
+        CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR);
     }
-    // Real Measurement
-    error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
-    sleep(1);
-    error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-    for (int i = ullmf_eml_device.current_it; i < ullmf_eml_device.measurement_interval; i++) {
-    	error_code = ullmf_eml_device.parent.measurement_start(&ullmf_eml_device);
-    	CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, true);
-    	error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-		CU_ASSERT_EQUAL(error_code,	ULLMF_MEASUREMENT_SUCCESS);
-    	CU_ASSERT_EQUAL(ullmf_eml_device.parent.measuring, false);
-    }
-	CU_ASSERT(ullmf_eml_device.parent.measurement > 1e-9);
-    // Testing measurement_stop behavior when start is not called
-    error_code = ullmf_eml_device.parent.measurement_stop(&ullmf_eml_device);
-    CU_ASSERT_EQUAL(error_code, ULLMF_MEASUREMENT_NOT_STARTED);
 }
 
 

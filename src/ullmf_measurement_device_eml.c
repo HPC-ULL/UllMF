@@ -99,12 +99,13 @@ static enum ullmf_measurement_error measurement_start(void* self) {
         return ULLMF_MEASUREMENT_STARTED;
     }
     if (self_md_eml->ndevices > 0) {
-        if (self_md_eml->measurement_interval != 0 &&
-        		self_md_eml->current_it == 0) {
+        if (self_md_eml->measurement_interval > 0 &&
+        	!(self_md_eml->current_it % self_md_eml->next_start)) {
             self_md_eml->err = emlStart();
             if (self_md_eml->err != EML_SUCCESS)
                 return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
             self_md_eml->parent.measuring = true;
+            self_md_eml->next_start += self_md_eml->measurement_interval;
         } else {
             if (!self_md_eml->interval_calc_started) {
             	self_md_eml->interval_calc_started = true;
@@ -112,7 +113,6 @@ static enum ullmf_measurement_error measurement_start(void* self) {
             }
             self_md_eml->parent.measuring = true;
         }
-    	self_md_eml->current_it++;
     } else {
     	if (self_md_eml->ndevices == 0) {
     		dbglog_warn("No EML measurement devices found.\n");
@@ -126,7 +126,7 @@ static enum ullmf_measurement_error calculate_measurement_interval(measurement_d
 	self->first_calibration_t = millitimestamp() - self->first_calibration_t;
 	unsigned long long iteration_time = self->first_calibration_t / self->internal_calibration_interval;
 	self->measurement_interval = self->measurement_time_interval / iteration_time;
-    dbglog_info("Measurement interval: %d iterations (if 0 then 1)\n", self->measurement_interval);
+    dbglog_info("Measurement interval: %lu iterations (if 0 then 1)\n", self->measurement_interval);
 	if (!self->measurement_interval)
 		self->measurement_interval = 1;
 	MPI_Allreduce(&self->measurement_interval, &self->measurement_interval, 1, MPI_INT,
@@ -138,17 +138,24 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     if (class_typecheck(self, ullmf_eml_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     measurement_device_eml_t* self_md_eml = (measurement_device_eml_t *) self;
-    enum ullmf_measurement_error err = ULLMF_MEASUREMENT_SUCCESS;
+    if (self_md_eml->ndevices == 0) {
+        dbglog_warn("No EML measurement devices found.\n");
+        return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
+    }
+    enum ullmf_measurement_error err = ULLMF_MEASUREMENT_RUNNING;
     if (!self_md_eml->parent.measuring) {
     	return ULLMF_MEASUREMENT_NOT_STARTED;
     }
-	self_md_eml->parent.measuring = false;
-    // self_md_eml->current_it always >= 0 && self_md_eml->measurement_interval == 0 only on startup
-    if (self_md_eml->measurement_interval == self_md_eml->current_it) {
+    self_md_eml->current_it++;
+    if (self_md_eml->measurement_interval > 0 &&
+        !(self_md_eml->current_it % self_md_eml->next_stop)
+       )
+    {
+        self_md_eml->parent.measuring = false;
     	err = get_eml_measurements(self_md_eml);
     	if (err != ULLMF_MEASUREMENT_SUCCESS)
     		return err;
-    	self_md_eml->current_it = 0;
+    	self_md_eml->next_stop += self_md_eml->measurement_interval;
     	// TODO Measurement refresh
     	/*
     	 * calib->energy->last_refresh--;
@@ -163,12 +170,13 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
             }
     	 */
     } else {
-    	if (self_md_eml->current_it % self_md_eml->internal_calibration_interval == 0) {
+    	if (self_md_eml->current_it == self_md_eml->internal_calibration_interval - 1) {
     		err = calculate_measurement_interval(self_md_eml);
-        	self_md_eml->current_it = 0;
+            self_md_eml->parent.measuring = false;
+            self_md_eml->next_start = self_md_eml->current_it;
+            self_md_eml->next_stop = self_md_eml->current_it + self_md_eml->measurement_interval;
     	}
     }
-
     return err;
 }
 
@@ -193,5 +201,7 @@ measurement_device_eml_t ullmf_eml_device = {
         .first_calibration_t = 0,
 		.internal_calibration_interval = INTERNAL_CALIBRATION_INTERVAL,
 		.eml_comm = MPI_COMM_WORLD,
+        .next_start = INTERNAL_CALIBRATION_INTERVAL,
+		.next_stop = INTERNAL_CALIBRATION_INTERVAL,
 };
 

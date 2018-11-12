@@ -21,7 +21,7 @@
 #include <float.h>
 #include <ullmf_distribution.h>
 
-static const double epsilon = 0.0005;
+static const double epsilon = 1e-9;
 
 static void calculate_totals(ullmf_calibration_t* calib, double * total_time, double * tmax, double * tmin) {
 	*total_time = 0;
@@ -29,7 +29,7 @@ static void calculate_totals(ullmf_calibration_t* calib, double * total_time, do
 	*tmin = DBL_MAX;
 	dbglog_info("          time spent: ");
 	for (int i = 0; i < calib->num_procs; i++) {
-		dbglog_append("%.4f ", calib->measurements[i]);
+		dbglog_append("%.8f ", calib->measurements[i]);
 		*total_time += calib->measurements[i];
 		if (calib->measurements[i] == 0)
 			continue;

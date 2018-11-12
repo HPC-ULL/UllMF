@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib) {
-	dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
+	//dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
 
 	ullmf_distribution_t * new_distribution = calib->strategy->best_candidate;
 	ullmf_workload_t * old_workload = calib->workload;
