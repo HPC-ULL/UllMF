@@ -126,7 +126,7 @@ static enum ullmf_measurement_error calculate_measurement_interval(measurement_d
 	self->first_calibration_t = millitimestamp() - self->first_calibration_t;
 	unsigned long long iteration_time = self->first_calibration_t / self->internal_calibration_interval;
 	self->measurement_interval = self->measurement_time_interval / iteration_time;
-
+    dbglog_info("Measurement interval: %d iterations (if 0 then 1)\n", self->measurement_interval);
 	if (!self->measurement_interval)
 		self->measurement_interval = 1;
 	MPI_Allreduce(&self->measurement_interval, &self->measurement_interval, 1, MPI_INT,
