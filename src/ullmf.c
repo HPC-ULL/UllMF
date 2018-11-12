@@ -110,15 +110,17 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 }
 
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
-	//dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
+	dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
     if (!calib->started) {
     	dbglog_append(" NOT STARTED; \n");
         return ULLMF_NOT_STARTED;
     }
-    //dbglog_append("\n");
+    dbglog_append("\n");
 
+    dbglog_info("[id = %d] calib->strategy->mdevice->measurement_stop\n", calib->id);
     calib->strategy->mdevice->measurement_stop(calib->strategy->mdevice);
     calib->measurements[calib->id] = calib->strategy->mdevice->measurement;
+    dbglog_info("[id = %d] calib->workload->set_workload\n", calib->id);
     calib->workload->set_workload(calib->workload, counts, displs);
     MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
                calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);

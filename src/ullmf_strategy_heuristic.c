@@ -93,7 +93,7 @@ ullmf_workload_t * move_workload(ullmf_calibration_t* calib, int process, int di
 int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t*** candidates) {
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	int num_candidates = calib->num_procs * 2; // TODO substitution for parametric value heuristic size
-                                               	   // should be included inside heuristic constructor
+                                               // should be included inside heuristic constructor
 	int direction = 1;
 	int switch_direction = 0;
 	(*candidates) = malloc(num_candidates * sizeof(*candidates));
