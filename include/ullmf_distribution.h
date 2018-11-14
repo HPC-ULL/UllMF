@@ -26,7 +26,7 @@ struct ullmf_distribution {
     int num_procs; // number of candidates
     double * proportional_workload; // Workload normalized distribution
     double total; // Workload total (to check if sum(ratios) == 1
-    int excess;
+    double excess;
 
     void (* set_proportional_workload)(ullmf_distribution_t * self,
     								   const double * const proportional_workload);

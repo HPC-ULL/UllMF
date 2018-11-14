@@ -23,6 +23,7 @@
 
 static void calibrate(ullmf_calibration_t * calib) {
     // TODO Optimize
+    MPI_Status status;
     if (calib->id == calib->root) {
         const int tag = calib->strategy->calibrate(calib);
         if (tag == ULLMF_TAG_RECALIBRATING) {
@@ -30,11 +31,12 @@ static void calibrate(ullmf_calibration_t * calib) {
         	calib->strategy->redistribute(calib);
         }
         for (int i = 0; i < calib->num_procs; i++)
-            MPI_Send(NULL, 0, MPI_BYTE, i, tag, calib->comm);
+            if (i != calib->root)
+                MPI_Send(NULL, 0, MPI_BYTE, i, tag, calib->comm);
+        status.MPI_TAG = tag;
+    } else {
+        MPI_Recv(NULL, 0, MPI_BYTE, calib->root, MPI_ANY_TAG, calib->comm, &status);
     }
-
-    MPI_Status status;
-    MPI_Recv(NULL, 0, MPI_BYTE, calib->root, MPI_ANY_TAG, calib->comm, &status);
 
     if (status.MPI_TAG == ULLMF_TAG_RECALIBRATING) {
         MPI_Bcast(calib->workload->counts, calib->num_procs, MPI_INT, calib->root, calib->comm);
@@ -115,16 +117,12 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
     	dbglog_append(" NOT STARTED; \n");
         return ULLMF_NOT_STARTED;
     }
-    dbglog_append("\n");
 
-    dbglog_info("[id = %d] calib->strategy->mdevice->measurement_stop\n", calib->id);
     calib->strategy->mdevice->measurement_stop(calib->strategy->mdevice);
     calib->measurements[calib->id] = calib->strategy->mdevice->measurement;
-    dbglog_info("[id = %d] calib->workload->set_workload\n", calib->id);
     calib->workload->set_workload(calib->workload, counts, displs);
     MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
                calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
-
     calibrate(calib);
 
     memcpy(counts, calib->workload->counts, sizeof(*counts) * calib->num_procs);

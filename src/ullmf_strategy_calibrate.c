@@ -72,8 +72,9 @@ static int calibrate(ullmf_calibration_t* calib) {
     calculate_totals(calib, &total_time, &tmax, &tmin);
 
 	if ((tmax == DBL_MIN) || (tmin == DBL_MAX) ||
-		((1 - tmin / tmax) < strategy->threshold))
+		((1 - tmin / tmax) < strategy->threshold)) {
 		return ULLMF_TAG_CALIBRATED;
+	}
 
 	dbglog_info("             counts: ");
 	for (int i = 0; i < calib->num_procs; i++) {

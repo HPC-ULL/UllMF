@@ -25,6 +25,11 @@ void ullmf_strategy_redistribute(ullmf_calibration_t* calib) {
 	ullmf_distribution_t * new_distribution = calib->strategy->best_candidate;
 	ullmf_workload_t * old_workload = calib->workload;
 
+    dbglog_info(" redistribute new distr: ");
+    for (int i = 0; i < calib->num_procs; i++) {
+        dbglog_append("  %.4f", new_distribution->proportional_workload[i]);
+    }
+    dbglog_append("\n");
 	ullmf_workload_t * new_workload = calib->workload->new_from_distribution(calib->workload, new_distribution);
 	calib->workload = new_workload;
 	_delete(old_workload);

@@ -47,7 +47,7 @@ double ullmf_evalue_max(ullmf_calibration_t* calib,
 
 
 bool is_movement_legal(double current_ratio, double ratio_step, int direction) {
-    if ((current_ratio + ratio_step * direction) >= 0
+    if ((current_ratio + ratio_step * direction) >= epsilon
             && (current_ratio + ratio_step * direction) <= 1)
         return true;
     return false;
@@ -99,6 +99,7 @@ int generate_distributions(ullmf_calibration_t* calib, ullmf_workload_t*** candi
 	(*candidates) = malloc(num_candidates * sizeof(*candidates));
 	int current_candidate = 0;
 	for (int i = 0; i < num_candidates; i++) {
+	    // TODO Avoid duplicated movements
 		int process = i % calib->num_procs;
 		if (is_movement_legal(calib->workload->proportional_workload[process],
 				heuristic->search_distance, direction)) {
@@ -124,8 +125,6 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 
 
 void heuristic_search(ullmf_calibration_t* calib) {
-	dbglog_info("[id = %d] heuristic_search\n", calib->id);
-
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 	// TODO Inversion if last solution is better than current one
 	if (heuristic->moved && !heuristic->tried_inversion) {
@@ -169,8 +168,8 @@ void heuristic_search(ullmf_calibration_t* calib) {
     		calib->strategy->best_candidate->set_proportional_workload(
     				calib->strategy->best_candidate, candidates[i]->proportional_workload);
     	}
-        dbglog_append("\n");
     }
+
 
     heuristic->search_distance /= 2;
     free_distributions(num_candidates, &candidates);

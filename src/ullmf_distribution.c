@@ -19,6 +19,8 @@
 #include "ullmf_distribution.h"
 #include "ullmf_class_utils.h"
 
+static const double precision = 1e-9;
+
 static void set_proportional_workload(ullmf_distribution_t * self,
 									  const double * const proportional_workload) {
 	size_t memsize = self->num_procs * sizeof(self->proportional_workload);
@@ -38,8 +40,8 @@ static double get_total(ullmf_distribution_t * self) {
 }
 
 static void redistribute_remainder(ullmf_distribution_t * self) {
-//TODO redistribute remainder if excess != 0
-	if (!self->excess)
+    //TODO redistribute remainder if excess != 0
+	if (self->excess < precision)
 		return;
 
 	int ordered_ratios_index[self->num_procs];
@@ -62,31 +64,21 @@ static void redistribute_remainder(ullmf_distribution_t * self) {
     }
 
     int i = 0;
-    while (self->excess != 0) {
-    	if (self->excess > 0) {
+    while (self->excess > precision || self->excess < precision) {
+    	if (self->excess > precision) {
     		self->proportional_workload[ordered_ratios_index[i]] =
-    				self->proportional_workload[ordered_ratios_index[i]] - 0.01;
-      		self->excess--;
+    				self->proportional_workload[ordered_ratios_index[i]] - self->excess;
     	} else {
     		self->proportional_workload[ordered_ratios_index[self->num_procs - i - 1]] =
-    				self->proportional_workload[ordered_ratios_index[self->num_procs - i - 1]] + 0.01;
-    		self->excess++;
+    				self->proportional_workload[ordered_ratios_index[self->num_procs - i - 1]] + self->excess;
     	}
     	i = (i + 1) % self->num_procs;
     }
-
+    self->excess = 0.0;
 	self->total = 0.0;
 	for (int i = 0; i < self->num_procs; i++) {
 		self->total += self->proportional_workload[i];
 	}
-
-//    double dbg_ratio_sum = 0;
-//    dbglog_info("  normalized ratios: ");
-//    for (int i = 0; i < self->num_procs; i++) {
-//        dbglog_append( DBG_FMT " ", self->proportional_workload[i] );
-//        dbg_ratio_sum += self->proportional_workload[i];
-//    }
-//    dbglog_append("\n");
 }
 
 // constructor(int num_procs, double * ratios)
@@ -104,7 +96,7 @@ static void * ullmf_distribution_t_constructor(void * self, va_list * args) {
     for(int i = 0; i < _self->num_procs; i++)
     	_self->total += _self->proportional_workload[i];
 
-    _self->excess = 100 - floor(_self->total * 100);
+    _self->excess = 1 - _self->total;
     redistribute_remainder(_self);
 
     // Functions
