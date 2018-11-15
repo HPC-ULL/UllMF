@@ -162,7 +162,7 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     }
     self_md_eml->current_it++;
     dbglog_info("Measurement Stop. Current It (Pre %lu) %lu\n", self_md_eml->current_it - 1, self_md_eml->current_it);
-    dbglog_info("Next Stop: %lu\n", self_md_eml->next_stop);
+    dbglog_info("Next Stop: %llu\n", self_md_eml->next_stop);
     if (self_md_eml->measurement_interval > 0 &&
         !(self_md_eml->current_it % self_md_eml->next_stop)
        )

@@ -14,12 +14,14 @@
 #include <mpi.h>
 #include <string.h>
 #include <assert.h>
+#include <string.h>
 
 #include "debug.h"
 #include "ullmf.h"
 #include "ullmf_calibration.h"
 #include "ullmf_workload.h"
 #include "ullmf_class_utils.h"
+#include "ullmf_strategy_heuristic.h"
 
 static void calibrate(ullmf_calibration_t * calib) {
     // TODO Optimize
@@ -93,8 +95,14 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
 enum ullmf_error ullmf_mpi_free(ullmf_calibration_t * const calib) {
 	if (calib->workload != 0)
 		_delete(calib->workload);
+    // TODO This is real bad, should be moved inside some sort of destructor for the strategies
 	if (calib->strategy->best_candidate != 0)
 		_delete(calib->strategy->best_candidate);
+	if (!strcmp(calib->strategy->_class.name, ullmf_strategy_heuristic_class)) {
+	    ullmf_strategy_heuristic_t* heuristic = (ullmf_strategy_heuristic_t*) calib->strategy;
+	    if (heuristic->previous_candidate != 0)
+	        _delete(heuristic->previous_candidate);
+	}
     free(calib->measurements);
     return ULLMF_SUCCESS;
 }

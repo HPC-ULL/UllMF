@@ -57,17 +57,24 @@ struct ullmf_strategy_heuristic {
 	/** Threshold to stop the heuristic search */
 	double search_threshold;
 
+	/** Maximum number of neighbor generations per iteration */
+	int max_trials_per_call;
+
+	/* Inversion related parameters */
 	/** Did I find a solution to move in the last iteration */
 	bool moved;
 
-	/** Inversion mechanism for last movement */
-	bool tried_inversion;
+	/** The distribution from which the current workload  */
+	ullmf_distribution_t* previous_candidate;
 
-	/** Was the previous movement an inversion */
-	bool previously_inverted; //TODO
+    /** Previous resource consumption */
+    double previous_consumption;
 
-	/** Previous resource consumption */
-	double previous_consumption;
+    /** Is the movement caused by the reset_probability */
+	bool are_remaining_movements_last;
+
+	/** Counter for the two possible inversions after every movement (0, 1, 2) */
+	int remaining_backtrack_steps;
 
     /** Heuristic population evaluation */
     double (*evalue_workload_distribution)(ullmf_calibration_t* calib,
@@ -94,8 +101,6 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates);
 void heuristic_search(ullmf_calibration_t* calib);
 
 int ullmf_heuristic_calibrate(ullmf_calibration_t* calib);
-
-
 
 
 

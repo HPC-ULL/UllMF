@@ -51,6 +51,7 @@ void test_redistribute(void)
 		.best_candidate = new_distribution,
 	};
 
+	calib.num_procs = num_procs;
 	calib.workload = workload;
 	calib.strategy = &strategy;
 

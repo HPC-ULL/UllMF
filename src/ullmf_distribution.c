@@ -17,6 +17,7 @@
 
 #include "debug.h"
 #include "ullmf_distribution.h"
+#include "ullmf_utils.h"
 #include "ullmf_class_utils.h"
 
 static const double precision = 1e-9;
@@ -41,7 +42,7 @@ static double get_total(ullmf_distribution_t * self) {
 
 static void redistribute_remainder(ullmf_distribution_t * self) {
     //TODO redistribute remainder if excess != 0
-	if (self->excess < precision)
+	if (f_is_zero(self->excess, precision))
 		return;
 
 	int ordered_ratios_index[self->num_procs];
@@ -63,17 +64,14 @@ static void redistribute_remainder(ullmf_distribution_t * self) {
         }
     }
 
-    int i = 0;
-    while (self->excess > precision || self->excess < precision) {
-    	if (self->excess > precision) {
-    		self->proportional_workload[ordered_ratios_index[i]] =
-    				self->proportional_workload[ordered_ratios_index[i]] - self->excess;
-    	} else {
-    		self->proportional_workload[ordered_ratios_index[self->num_procs - i - 1]] =
-    				self->proportional_workload[ordered_ratios_index[self->num_procs - i - 1]] + self->excess;
-    	}
-    	i = (i + 1) % self->num_procs;
+    if (self->excess > precision) {
+        self->proportional_workload[ordered_ratios_index[0]] =
+                self->proportional_workload[ordered_ratios_index[0]] - self->excess;
+    } else {
+        self->proportional_workload[ordered_ratios_index[self->num_procs - 1]] =
+                self->proportional_workload[ordered_ratios_index[self->num_procs - 1]] - self->excess;
     }
+
     self->excess = 0.0;
 	self->total = 0.0;
 	for (int i = 0; i < self->num_procs; i++) {

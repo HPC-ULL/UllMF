@@ -77,22 +77,24 @@ void test_redistribute_remainder(void)
 
 	double proportional_workload3[4] = {0.2, 0.10, 0.38, 0.37};
 	distribution1->proportional_workload = proportional_workload3;
-	distribution1->excess = 5;
+	distribution1->excess = 0.05;
 	distribution1->redistribute_remainder(distribution1);
 
-	CU_ASSERT_DOUBLE_EQUAL(0.19, distribution1->proportional_workload[0], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.08, distribution1->proportional_workload[1], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.37, distribution1->proportional_workload[2], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.36, distribution1->proportional_workload[3], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.20, distribution1->proportional_workload[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.05, distribution1->proportional_workload[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.38, distribution1->proportional_workload[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.37, distribution1->proportional_workload[3], 0.005);
+
 
 	double proportional_workload4[4] = {0.10, 0.15, 0.36, 0.34};
 	distribution1->proportional_workload = proportional_workload4;
-	distribution1->excess = -5;
+	distribution1->excess = -0.05;
 	distribution1->redistribute_remainder(distribution1);
-	CU_ASSERT_DOUBLE_EQUAL(0.11, distribution1->proportional_workload[0], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.16, distribution1->proportional_workload[1], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.38, distribution1->proportional_workload[2], 0.005);
-	CU_ASSERT_DOUBLE_EQUAL(0.35, distribution1->proportional_workload[3], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.10, distribution1->proportional_workload[0], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.15, distribution1->proportional_workload[1], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.41, distribution1->proportional_workload[2], 0.005);
+	CU_ASSERT_DOUBLE_EQUAL(0.34, distribution1->proportional_workload[3], 0.005);
+
 
 	distribution1->proportional_workload = old_proportional_workload;
 	old_proportional_workload = 0;

@@ -19,11 +19,12 @@
 #include "debug.h"
 
 // TODO Parameters inside a constructor for the strategy
-#define _energy_reset_probability 0.03
-#define _energy_reset_increment 0.02
+#define _energy_reset_probability 0.05
+#define _energy_reset_increment 0.05
 #define _starting_search_distance 0.25
 #define _restarting_search_distance 0.12
-#define _search_threshold 0.001
+#define _search_threshold 0.01
+#define _max_trials_per_call 3
 
 static ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
     .parent.parent._class.size = sizeof(ullmf_strategy_heuristic_energy_t),
@@ -33,15 +34,19 @@ static ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
     .parent.parent.redistribute = &ullmf_strategy_redistribute,
 	.parent.parent.best_candidate = 0,
 	.parent.evalue_workload_distribution = &ullmf_evalue_sum,
-	.parent.is_calibrating = 0,
 	.parent.reset_probability = _energy_reset_probability,
 	.parent.initial_reset_probability = _energy_reset_probability,
 	.parent.reset_probability_increment = _energy_reset_increment,
 	.parent.search_distance = _starting_search_distance,
 	.parent.reset_search_distance = _restarting_search_distance,
 	.parent.search_threshold = _search_threshold,
-	.parent.tried_inversion = false,
+    .parent.max_trials_per_call = _max_trials_per_call,
     .parent.moved = false,
+    .parent.previous_candidate = 0,
+    .parent.previous_consumption = 0,
+    .parent.are_remaining_movements_last = false,
+    .parent.remaining_backtrack_steps = 0,
 };
+
 
 ullmf_strategy_t * ullmf_strategy_heuristic_energy = (ullmf_strategy_t *) &_ullmf_strategy_heuristic_energy;

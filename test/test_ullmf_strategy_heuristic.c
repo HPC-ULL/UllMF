@@ -158,7 +158,7 @@ void test_generate_distributions(void)
     // Expected
     //	To 0; 0.30 0.10 0.60  -> 0.600 0.025 0.375
     //	To 1; 0.30 0.10 0.60  -> 0.150 0.400 0.450
-    //	To 2; 0.30 0.10 0.60  -> 0.075 0.015 0.910
+    //	To 2; 0.30 0.10 0.60  -> 0.075 0.025 0.900
     //	From 0; 0.30 0.10 0.60  -> 0.000 0.250 0.750
     //	From 1; 0.30 0.10 0.60  -> 0.450 -0.200 0.750 <- Discarded
     //	From 2; 0.30 0.10 0.60  -> 0.450 0.250 0.300
@@ -166,7 +166,7 @@ void test_generate_distributions(void)
     double expected[6][3] = {
     		{0.600, 0.025, 0.375},
     		{0.150, 0.400, 0.450},
-    		{0.075, 0.015, 0.910},
+    		{0.075, 0.025, 0.900},
     		{0.000, 0.250, 0.750},
     		{0.450, 0.250, 0.300},
     };
@@ -210,12 +210,6 @@ void test_heuristic_search(void) {
 	int displ[3] = {0, 300, 400};
 	double ratios[3] = {0.3, 0.1, 0.6};
 	double measurements[3] = {300, 200, 300};
-	// 	 0.300 0.100 0.600 = {300, 200, 300} = 800
-	//	 0.600 0.025 0.375 = {600, 50, 187.5} = 837.5
-	//	 0.150 0.400 0.450 = {150, 800, 225} = 1175
-	//	 0.075 0.015 0.910 = {75, 30, 455} = 560 <- Best candidate
-	//	 0.000 0.250 0.750 = {0, 500, 375} = 875
-	//	 0.450 0.250 0.300 = {450, 500, 150} 1100
 	int blocksize = 1;
 	double search_distance = 0.3;
 	ullmf_calibration_t calib;
@@ -226,9 +220,16 @@ void test_heuristic_search(void) {
     ullmf_strategy_heuristic_t *heuristic = (ullmf_strategy_heuristic_t *) calib.strategy;
     heuristic->search_distance = search_distance;
 
+    //   0.300 0.100 0.600 = {300, 200, 300} = 800 <- Original
+    //   0.600 0.025 0.375 = {600, 50, 187.5} = 837.5
+    //   0.150 0.400 0.450 = {150, 800, 225} = 1175
+    //   0.075 0.025 0.900 = {75, 50, 450} = 575 <- Best candidate
+    //   0.000 0.250 0.750 = {0, 500, 375} = 875
+    //   0.450 -0.200 0.750 <- Discarded
+    //   0.450 0.250 0.300 = {450, 500, 150} 1100
     heuristic_search(&calib);
 
-    double expected[3] = {0.075, 0.015, 0.910};
+    double expected[3] = {0.075, 0.025, 0.900};
     for (int i = 0; i < num_procs; i++) {
     	CU_ASSERT_DOUBLE_EQUAL(calib.strategy->best_candidate->proportional_workload[i],
     			expected[i], error_tolerance);
@@ -240,7 +241,16 @@ void test_heuristic_search(void) {
     heuristic = (ullmf_strategy_heuristic_t *) calib.strategy;
 
     heuristic->search_distance = search_distance;
+
+    //   0.300 0.100 0.600 = {300, 200, 300} = 300 <- Original
+    //   0.600 0.025 0.375 = {600, 50, 187.5} = 600
+    //   0.150 0.400 0.450 = {150, 800, 225} = 800
+    //   0.075 0.025 0.900 = {75, 50, 450} = 450 <- Best candidate
+    //   0.000 0.250 0.750 = {0, 500, 375} = 500
+    //   0.450 -0.200 0.750 <- Discarded
+    //   0.450 0.250 0.300 = {450, 500, 150} 500
     heuristic_search(&calib);
+
     for (int i = 0; i < num_procs; i++) {
     	CU_ASSERT_DOUBLE_EQUAL(calib.strategy->best_candidate->proportional_workload[i],
     			ratios[i], error_tolerance);
@@ -251,6 +261,8 @@ void test_heuristic_search(void) {
     _delete(calib.workload);
     _delete(calib.strategy->best_candidate);
     calib.strategy->best_candidate = 0;
+    heuristic->remaining_backtrack_steps = 0;
+    heuristic->are_remaining_movements_last = false;
 }
 
 
@@ -290,17 +302,45 @@ void test_calibrate(void)
 	CU_ASSERT_DOUBLE_EQUAL(distr->get_total(distr), 1, 0.0001);
 	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.75, error_tolerance);
 	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.25, error_tolerance);
-    _delete(calib.workload);
-    _delete(calib.strategy->best_candidate);
-    calib.strategy->best_candidate = 0;
+	CU_ASSERT_NOT_EQUAL(heuristic->previous_candidate, 0);
+    CU_ASSERT_EQUAL(heuristic->remaining_backtrack_steps, 2);
+    CU_ASSERT_EQUAL(heuristic->moved, true);
 
-    // Should invert when reached the reset point
+    // Should invert when reached the reset point IF Previous consumption was better
+    heuristic->previous_consumption = 0; // Current Best is 100
     heuristic->search_distance = search_distance2;
     heuristic->search_threshold = search_threshold;
-    CU_ASSERT_EQUAL(heuristic->moved, true);
-    CU_ASSERT_EQUAL(heuristic->tried_inversion, false);
 	tag = calib.strategy->calibrate(&calib);
 	CU_ASSERT_EQUAL(tag, ULLMF_TAG_RECALIBRATING);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.25, error_tolerance);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.75, error_tolerance);
+    CU_ASSERT_EQUAL(heuristic->remaining_backtrack_steps, 1);
+    CU_ASSERT_EQUAL(heuristic->moved, true);
+
+    // Should undo movement IF Previous consumption was better twice
+    heuristic->previous_consumption = 0; // Current Best is 300
+    heuristic->search_distance = search_distance2;
+    heuristic->search_threshold = search_threshold;
+    tag = calib.strategy->calibrate(&calib);
+    CU_ASSERT_EQUAL(tag, ULLMF_TAG_RECALIBRATING);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.5, error_tolerance);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.5, error_tolerance);
+    CU_ASSERT_EQUAL(heuristic->remaining_backtrack_steps, 0);
+    CU_ASSERT_EQUAL(heuristic->moved, true);
+
+    // Should NOT invert when reached the reset point IF Previous consumption was worse
+    heuristic->previous_consumption = 900000; // Current Best is 100
+    heuristic->are_remaining_movements_last = true;
+    heuristic->remaining_backtrack_steps = 2;
+    heuristic->search_distance = search_distance2;
+    heuristic->search_threshold = search_threshold;
+    distr->proportional_workload[0] = 0.25;
+    distr->proportional_workload[1] = 0.75;
+    tag = calib.strategy->calibrate(&calib);
+    CU_ASSERT_EQUAL(tag, ULLMF_TAG_RECALIBRATING);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.25, error_tolerance);
+    CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.75, error_tolerance);
+    CU_ASSERT_EQUAL(heuristic->remaining_backtrack_steps, 0);
 
     // Should do nothing is the reset probability fails
 	heuristic->reset_probability = 0.0;
@@ -309,21 +349,28 @@ void test_calibrate(void)
 	CU_ASSERT_EQUAL(tag, ULLMF_TAG_CALIBRATED);
 
     // Should restart is the reset probability is met
+    _delete(calib.workload);
     calib.workload = _new(Workload, num_procs, counts, displ, 1);
     calib.measurements = measurements;
 	heuristic->reset_probability = 1.0;
+    distr->proportional_workload[0] = 0.5;
+    distr->proportional_workload[1] = 0.5;
 
 	tag = calib.strategy->calibrate(&calib);
+    distr = calib.strategy->best_candidate;
 	CU_ASSERT_EQUAL(tag, ULLMF_TAG_RECALIBRATING);
 	CU_ASSERT_DOUBLE_EQUAL(heuristic->search_distance, heuristic->reset_search_distance / 2, error_tolerance);
 	CU_ASSERT_DOUBLE_EQUAL(heuristic->reset_probability, heuristic->initial_reset_probability, error_tolerance);
-	distr = calib.strategy->best_candidate;
 	CU_ASSERT_EQUAL(distr->get_num_procs(distr), 2);
 	CU_ASSERT_DOUBLE_EQUAL(distr->get_total(distr), 1, 0.0001);
+
 	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[0], 0.50 + heuristic->reset_search_distance, error_tolerance);
 	CU_ASSERT_DOUBLE_EQUAL(distr->proportional_workload[1], 0.50 - heuristic->reset_search_distance, error_tolerance);
+
 	_delete(calib.workload);
 	_delete(calib.strategy->best_candidate);
+    _delete(heuristic->previous_candidate);
+    heuristic->previous_candidate = 0;
 	calib.strategy->best_candidate = 0;
 }
 
