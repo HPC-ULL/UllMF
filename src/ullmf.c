@@ -123,7 +123,7 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
 	dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
 #ifndef NDEBUG
-	if (calib->root) {
+	if (calib->id == calib->root) {
 	    dbglog_info("     Calib Iteration: %lu\n", calib->iteration++);
         dbglog_info("      Current Counts: ");
         for (int i = 0; i < calib->num_procs; i++) {
@@ -143,8 +143,11 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
     MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
                calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
     calibrate(calib);
-
-    dbglog_info("          New Counts: ");
+#ifndef NDEBUG
+    if (calib->id == calib->root) {
+        dbglog_info("          New Counts: ");
+    }
+#endif
     for (int i = 0; i < calib->num_procs; i++) {
         dbglog_append("%d ", calib->workload->counts[i]);
     }
