@@ -17,6 +17,7 @@
 #include "ullmf_strategy_heuristic_time.h"
 #include "ullmf_measurement_device_mpi.h"
 #include "debug.h"
+#include <float.h>
 
 #define _time_reset_probability 0.05
 #define _time_reset_increment 0.03
@@ -43,7 +44,7 @@ static ullmf_strategy_heuristic_time_t _ullmf_strategy_heuristic_time = {
     .parent.max_trials_per_call = _max_trials_per_call,
     .parent.moved = false,
     .parent.previous_candidate = 0,
-    .parent.previous_consumption = 0,
+    .parent.previous_consumption = DBL_MAX,
     .parent.are_remaining_movements_last = false,
     .parent.remaining_backtrack_steps = 0,
 };

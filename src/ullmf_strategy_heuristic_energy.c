@@ -17,6 +17,7 @@
 #include "ullmf_strategy_heuristic_energy.h"
 #include "ullmf_measurement_device_eml.h"
 #include "debug.h"
+#include <float.h>
 
 // TODO Parameters inside a constructor for the strategy
 #define _energy_reset_probability 0.05
@@ -43,7 +44,7 @@ static ullmf_strategy_heuristic_energy_t _ullmf_strategy_heuristic_energy = {
     .parent.max_trials_per_call = _max_trials_per_call,
     .parent.moved = false,
     .parent.previous_candidate = 0,
-    .parent.previous_consumption = 0,
+    .parent.previous_consumption = DBL_MAX,
     .parent.are_remaining_movements_last = false,
     .parent.remaining_backtrack_steps = 0,
 };

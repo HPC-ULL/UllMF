@@ -86,14 +86,11 @@ static enum ullmf_measurement_error shutdown(void* self) {
     if (class_typecheck(self, ullmf_eml_class))
         return ULLMF_MEASUREMENT_WRONG_CLASS;
     struct measurement_device_eml * self_md_eml = (struct measurement_device_eml *) self;
-    dbglog_info("Eml Calls SHUTDOWN = %d\n", eml_calls);
-    dbglog_info("self_md_eml->parent.measuring = %d\n", self_md_eml->parent.measuring);
     if (self_md_eml->parent.measuring) {
         self_md_eml->err = get_eml_measurements(self_md_eml);
         if (self_md_eml->err != EML_SUCCESS)
             return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
     }
-    dbglog_info("Eml Calls AFTER SHUTDOWN = %d\n", eml_calls);
     // TODO There is an error in EML that corrupts memory when shutdown is performed
     //self_md_eml->err = emlShutdown();
     if (self_md_eml->err != EML_SUCCESS)
@@ -115,7 +112,6 @@ static enum ullmf_measurement_error measurement_start(void* self) {
                 !(self_md_eml->current_it % self_md_eml->next_start)) {
             self_md_eml->err = emlStart();
             eml_calls++;
-            dbglog_info("Eml Calls = %d\n", eml_calls);
             if (self_md_eml->err != EML_SUCCESS)
                 return ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR;
             self_md_eml->parent.measuring = true;
@@ -161,8 +157,6 @@ static enum ullmf_measurement_error measurement_stop(void* self) {
     	return ULLMF_MEASUREMENT_NOT_STARTED;
     }
     self_md_eml->current_it++;
-    dbglog_info("Measurement Stop. Current It (Pre %lu) %lu\n", self_md_eml->current_it - 1, self_md_eml->current_it);
-    dbglog_info("Next Stop: %llu\n", self_md_eml->next_stop);
     if (self_md_eml->measurement_interval > 0 &&
         !(self_md_eml->current_it % self_md_eml->next_stop)
        )
