@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[CAL-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
+#define DBGLOG(TAG, MSG, ...) fprintf(stderr, "[ULLMF-" TAG "] (%s:%d) " MSG "%c", __FILE__, __LINE__, __VA_ARGS__)
 #define DBGLOG2(MSG, ...) fprintf(stderr, MSG "%c", __VA_ARGS__)
 
 #endif //NDEBUG

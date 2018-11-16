@@ -39,6 +39,8 @@ struct measurement_device_eml {
 
     bool interval_calc_started;
 
+    bool measuring; // Internal state to manage internal_calibration_interval
+
     size_t measurement_interval;
 
     unsigned long long measurement_time_interval;
