@@ -138,11 +138,12 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
             heuristic->previous_consumption, best_consumption,
             heuristic->previous_consumption < best_consumption);
 
+    // TODO change heuristic->previous_consumption < best_consumption for % based increase
     if (heuristic->previous_consumption < best_consumption &&
             heuristic->remaining_backtrack_steps > 0) {
         heuristic->moved = true;
         heuristic->remaining_backtrack_steps--;
-        if (!heuristic->are_remaining_movements_last) {
+        if (heuristic->remaining_backtrack_steps == 2) {
             double * inverted_ratios = malloc(calib->num_procs * sizeof(double));
             ullmf_heuristic_workload_inversion(&inverted_ratios, calib,
                     heuristic->parent.best_candidate, heuristic->previous_candidate);
@@ -152,15 +153,17 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
             );
             dbglog_append(" First Inversion\n");
             free(inverted_ratios);
+            return true;
         } else {
-            heuristic->parent.best_candidate->set_proportional_workload(
-                    heuristic->parent.best_candidate,
-                    heuristic->previous_candidate->proportional_workload
-            );
-            dbglog_append(" Last movement -> Second Inversion\n");
-
+            if (heuristic->are_remaining_movements_last) {
+                heuristic->parent.best_candidate->set_proportional_workload(
+                        heuristic->parent.best_candidate,
+                        heuristic->previous_candidate->proportional_workload
+                );
+                dbglog_append(" Last movement -> Second Inversion\n");
+                return true;
+            }
         }
-        return true;
     }
     dbglog_append("Skipping\n");
 
@@ -208,9 +211,6 @@ void heuristic_search(ullmf_calibration_t* calib) {
         return;    // Only reached if the inversion is required after the search has finished
     }
 
-    // Generate heuristic population of candidates
-    ullmf_workload_t ** candidates;
-    int num_candidates = generate_distributions(calib, &candidates);
 
     // Evaluate heuristic population
     heuristic->previous_consumption = best_consumption;
@@ -235,6 +235,10 @@ void heuristic_search(ullmf_calibration_t* calib) {
     double candidate_consumption;
     int tries = 0;
     while (!heuristic->moved && tries < heuristic->max_trials_per_call) {
+        // Generate heuristic population of candidates
+        ullmf_workload_t ** candidates;
+        int num_candidates = generate_distributions(calib, &candidates);
+
         dbglog_info("        Heuristic Try: %d, (Moving %.3f)\n", tries, heuristic->search_distance);
 
         for (int i = 0; i < num_candidates; i++) {
@@ -254,6 +258,7 @@ void heuristic_search(ullmf_calibration_t* calib) {
             }
             dbglog_append("\n");
         }
+        free_distributions(num_candidates, &candidates);
         tries++;
         heuristic->search_distance /= 2;
         if (heuristic->search_distance < heuristic->search_threshold)
@@ -261,7 +266,6 @@ void heuristic_search(ullmf_calibration_t* calib) {
     }
 
     heuristic->remaining_backtrack_steps = 2;
-    free_distributions(num_candidates, &candidates);
     free(resource_ratios);
 }
 

@@ -127,7 +127,7 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
 	    dbglog_info("     Calib Iteration: %lu\n", calib->iteration++);
         dbglog_info("      Current Counts: ");
         for (int i = 0; i < calib->num_procs; i++) {
-            dbglog_info("%d ", calib->workload->counts[i]);
+            dbglog_append("%d ", calib->workload->counts[i]);
         }
         dbglog_append("\n");
 	}
