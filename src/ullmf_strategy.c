@@ -21,26 +21,16 @@
 
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib) {
 	//dbglog_info("[id = %d] ullmf_strategy_redistribute\n", calib->id);
-
 	ullmf_distribution_t * new_distribution = calib->strategy->best_candidate;
 	ullmf_workload_t * old_workload = calib->workload;
-
-    dbglog_info(" redistribute new distr (n=%d): ", calib->num_procs);
-    for (int i = 0; i < calib->num_procs; i++) {
-        dbglog_append("  %.4f", new_distribution->proportional_workload[i]);
-    }
-    dbglog_append("\n");
 	ullmf_workload_t * new_workload = calib->workload->new_from_distribution(calib->workload, new_distribution);
 	calib->workload = new_workload;
 	_delete(old_workload);
 
-	dbglog_info("         new-counts: ");
 	int sum_counts = 0;
 	for (int i = 0; i < calib->workload->num_procs; i++) {
-		dbglog_append("%d ", calib->workload->counts[i]);
 		sum_counts += calib->workload->counts[i];
 	}
-	dbglog_append("(%d == %lu)\n", sum_counts, calib->workload->size);
 }
 
 

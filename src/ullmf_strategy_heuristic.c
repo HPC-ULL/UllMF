@@ -172,7 +172,7 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
 
 void heuristic_search(ullmf_calibration_t* calib) {
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
-
+    dbglog_info(" -- Current strategy: (%s) \n", heuristic->parent._class.name);
     dbglog_info("    measurement type: %s\n", heuristic->parent.mdevice->_class.name);
     dbglog_info("        measurements: ");
     for (int i = 0; i < calib->num_procs; i++) {
