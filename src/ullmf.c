@@ -82,7 +82,9 @@ enum ullmf_error ullmf_mpi_setup(ullmf_calibration_t ** const new_calib,
     calib->root = root;
     calib->started = false;
     calib->comm = comm;
-
+#ifndef NDEBUG
+    calib->iteration = 0;
+#endif
     dbglog_info("ullmf_mpi_setup\n");
     dbglog_info("   Strategy: %p\n", calib->strategy);
     dbglog_info("     Name: %s\n", calib->strategy->_class.name);
@@ -121,8 +123,18 @@ enum ullmf_error ullmf_mpi_start(ullmf_calibration_t * const calib) {
 
 enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts, int * displs) {
 	dbglog_info("[id = %d] ullmf_mpi_stop\n", calib->id);
+#ifndef NDEBUG
+	if (calib->root) {
+	    dbglog_info("     Calib Iteration: %lu\n", calib->iteration++);
+        dbglog_info("      Current Counts: ");
+        for (int i = 0; i < calib->num_procs; i++) {
+            dbglog_info("%d ", calib->workload->counts[i]);
+        }
+        dbglog_append("\n");
+	}
+#endif
     if (!calib->started) {
-    	dbglog_append(" NOT STARTED; \n");
+    	dbglog_append("        NOT STARTED \n");
         return ULLMF_NOT_STARTED;
     }
 
@@ -132,6 +144,12 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
     MPI_Gather(&calib->measurements[calib->id], 1, MPI_DOUBLE,
                calib->measurements, 1, MPI_DOUBLE, calib->root, calib->comm);
     calibrate(calib);
+
+    dbglog_info("          New Counts: ");
+    for (int i = 0; i < calib->num_procs; i++) {
+        dbglog_info("%d ", calib->workload->counts[i]);
+    }
+    dbglog_append("\n");
 
     memcpy(counts, calib->workload->counts, sizeof(*counts) * calib->num_procs);
     memcpy(displs, calib->workload->displs, sizeof(*displs) * calib->num_procs);

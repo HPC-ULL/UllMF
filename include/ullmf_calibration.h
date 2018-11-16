@@ -45,6 +45,9 @@ struct ullmf_calibration {
     int num_procs; // Number of processes
     int id; // Process id
     int root; // Root process
+#ifndef NDEBUG
+    size_t iteration; // Debug purposes
+#endif
     bool started;
     MPI_Comm comm; // MPI communicator
 };

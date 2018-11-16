@@ -134,6 +134,10 @@ void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibrati
 bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumption) {
     ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 
+    dbglog_info("    trying inversion: prev %.4f < curr %.4f? %d:",
+            heuristic->previous_consumption, best_consumption,
+            heuristic->previous_consumption < best_consumption);
+
     if (heuristic->previous_consumption < best_consumption) {
         // TODO try invert
         heuristic->moved = true;
@@ -146,15 +150,20 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
                     heuristic->parent.best_candidate,
                     inverted_ratios
             );
+            dbglog_append(" First Inversion\n");
             free(inverted_ratios);
         } else {
-            heuristic->parent.best_candidate->set_proportional_workload(
-                    heuristic->parent.best_candidate,
-                    heuristic->previous_candidate->proportional_workload
-            );
+            if (heuristic->are_remaining_movements_last) {
+                heuristic->parent.best_candidate->set_proportional_workload(
+                        heuristic->parent.best_candidate,
+                        heuristic->previous_candidate->proportional_workload
+                );
+                dbglog_append(" Last movement -> Second Inversion\n");
+            }
         }
         return true;
     }
+    dbglog_append("Skipping\n");
 
     heuristic->remaining_backtrack_steps = 0;
     return false;
@@ -164,12 +173,19 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
 void heuristic_search(ullmf_calibration_t* calib) {
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 
-    dbglog_info("    resource-ratios: ");
+    dbglog_info("    measurement type: %s\n", heuristic->parent.mdevice->_class.name);
+    dbglog_info("        measurements: ");
+    for (int i = 0; i < calib->num_procs; i++) {
+        dbglog_append("%.6f ", calib->measurements[i]);
+    }
+    dbglog_append("\n");
+
+    dbglog_info("     resource-ratios: ");
     // Calculate resources per unit of work
     double * resource_ratios = calloc(calib->num_procs, sizeof(double));
     for (int i = 0; i < calib->num_procs; i++) {
         resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]);
-        dbglog_append("(%.4f / %d) %.4f ", calib->measurements[i], calib->workload->counts[i], resource_ratios[i]);
+        dbglog_append(" %.3f", resource_ratios[i]);
         if (resource_ratios[i] < 1e-6) {
             dbglog_warn( "BAD RESOURCE RATIO FOR PROCESS %d", i);
         }
@@ -188,8 +204,10 @@ void heuristic_search(ullmf_calibration_t* calib) {
     }
 
 
-    if (heuristic->are_remaining_movements_last)
+    if (heuristic->are_remaining_movements_last) {
+        dbglog_info("       last-movement: Exiting \n");
         return;    // Only reached if the inversion is required after the search has finished
+    }
 
     // Generate heuristic population of candidates
     ullmf_workload_t ** candidates;
@@ -208,20 +226,34 @@ void heuristic_search(ullmf_calibration_t* calib) {
     }
 
     calib->strategy->best_candidate = _new(Distribution, calib->num_procs, calib->workload->proportional_workload);
+
+    dbglog_info("        Current Best: \n");
+    for (int j = 0; j < calib->num_procs; j++) {
+        dbglog_append("%.3f ", calib->workload->proportional_workload[j]);
+    }
+    dbglog_append("(%.5f)\n", best_consumption);
+
     double candidate_consumption;
     int tries = 0;
+    while (!heuristic->moved && tries < heuristic->max_trials_per_call) {
+        dbglog_info("        Heuristic Try: %d\n", tries);
 
-    while (!heuristic->moved || tries < heuristic->max_trials_per_call) {
         for (int i = 0; i < num_candidates; i++) {
             candidate_consumption = heuristic->evalue_workload_distribution(calib, candidates[i], resource_ratios);
 
+            dbglog_info("          Candidate[%d]: ", i);
+            for (int j = 0; j < calib->num_procs; j++) {
+                dbglog_append("%.3f ", candidates[i]->proportional_workload[j]);
+            }
+            dbglog_append("(%.6f, %.6f)", candidate_consumption, best_consumption);
             if (candidate_consumption < best_consumption) {
-
+                dbglog_append(" Moving");
                 heuristic->moved = true;
                 best_consumption = candidate_consumption;
                 calib->strategy->best_candidate->set_proportional_workload(
                         calib->strategy->best_candidate, candidates[i]->proportional_workload);
             }
+            dbglog_append("\n");
         }
         tries++;
         heuristic->search_distance /= 2;
@@ -244,13 +276,19 @@ int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 	if (heuristic->search_distance < heuristic->search_threshold) {
 		//Probability
 		if (!heuristic->remaining_backtrack_steps) {
+		    dbglog_info("  Inversion Finished: ");
+
 			double reset = (double)(rand() % 10000) / 10000; // TODO change to int logic
 			if (reset < heuristic->reset_probability) {
 				heuristic->search_distance = heuristic->reset_search_distance;
 				heuristic->reset_probability = heuristic->initial_reset_probability;
 				heuristic->are_remaining_movements_last = false;
+                dbglog_info("Restarting (d: %.3f, p(g): %.3f, last: %d)\n",
+                        heuristic->search_distance, heuristic->reset_probability,
+                        heuristic->are_remaining_movements_last);
 			} else {
 				heuristic->reset_probability += heuristic->reset_probability_increment;
+                dbglog_info("Not Restarting (New probability %.3f)\n", heuristic->reset_probability);
 				return ULLMF_TAG_CALIBRATED;
 			}
 		} else {
