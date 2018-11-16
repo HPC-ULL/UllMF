@@ -226,7 +226,7 @@ void heuristic_search(ullmf_calibration_t* calib) {
 
     calib->strategy->best_candidate = _new(Distribution, calib->num_procs, calib->workload->proportional_workload);
 
-    dbglog_info("        Current Best: \n");
+    dbglog_info("        Current Best: ");
     for (int j = 0; j < calib->num_procs; j++) {
         dbglog_append("%.3f ", calib->workload->proportional_workload[j]);
     }
@@ -235,7 +235,7 @@ void heuristic_search(ullmf_calibration_t* calib) {
     double candidate_consumption;
     int tries = 0;
     while (!heuristic->moved && tries < heuristic->max_trials_per_call) {
-        dbglog_info("        Heuristic Try: %d\n", tries);
+        dbglog_info("        Heuristic Try: %d, (Moving %.3f)\n", tries, heuristic->search_distance);
 
         for (int i = 0; i < num_candidates; i++) {
             candidate_consumption = heuristic->evalue_workload_distribution(calib, candidates[i], resource_ratios);
@@ -282,12 +282,13 @@ int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 				heuristic->search_distance = heuristic->reset_search_distance;
 				heuristic->reset_probability = heuristic->initial_reset_probability;
 				heuristic->are_remaining_movements_last = false;
-                dbglog_info("Restarting (d: %.3f, p(g): %.3f, last: %d)\n",
+                dbglog_append("Restarting (d: %.3f, p(g): %.3f, last: %d)\n",
                         heuristic->search_distance, heuristic->reset_probability,
                         heuristic->are_remaining_movements_last);
 			} else {
 				heuristic->reset_probability += heuristic->reset_probability_increment;
-                dbglog_info("Not Restarting (New probability %.3f)\n", heuristic->reset_probability);
+				dbglog_append("Not Restarting %.3f < %.3f (New probability %.3f)\n",
+				        reset, heuristic->reset_probability, heuristic->reset_probability);
 				return ULLMF_TAG_CALIBRATED;
 			}
 		} else {
