@@ -134,16 +134,17 @@ void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibrati
 bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumption) {
     ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 
-    dbglog_info("    trying inversion: prev %.4f < curr %.4f? %d:",
+    dbglog_info("    trying inversion: prev %.4f < curr %.4f? %d (%d steps): ",
             heuristic->previous_consumption, best_consumption,
-            heuristic->previous_consumption < best_consumption);
+            heuristic->previous_consumption < best_consumption,
+            heuristic->remaining_backtrack_steps);
 
     // TODO change heuristic->previous_consumption < best_consumption for % based increase
     if (heuristic->previous_consumption < best_consumption &&
             heuristic->remaining_backtrack_steps > 0) {
-        heuristic->moved = true;
-        heuristic->remaining_backtrack_steps--;
+        dbglog_append("last?=%d", heuristic->are_remaining_movements_last);
         if (heuristic->remaining_backtrack_steps == 2) {
+            dbglog_append("First Inversion\n");
             double * inverted_ratios = malloc(calib->num_procs * sizeof(double));
             ullmf_heuristic_workload_inversion(&inverted_ratios, calib,
                     heuristic->parent.best_candidate, heuristic->previous_candidate);
@@ -151,22 +152,23 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
                     heuristic->parent.best_candidate,
                     inverted_ratios
             );
-            dbglog_append(" First Inversion\n");
+            heuristic->remaining_backtrack_steps--;
             free(inverted_ratios);
             return true;
         } else {
             if (heuristic->are_remaining_movements_last) {
+                dbglog_append("Last movement -> Second Inversion\n");
                 heuristic->parent.best_candidate->set_proportional_workload(
                         heuristic->parent.best_candidate,
                         heuristic->previous_candidate->proportional_workload
                 );
-                dbglog_append(" Last movement -> Second Inversion\n");
+                heuristic->remaining_backtrack_steps--;
                 return true;
             }
         }
     }
     dbglog_append("Skipping\n");
-
+    // If skipped, then, no more backtrack will be attempted for the same solution.
     heuristic->remaining_backtrack_steps = 0;
     return false;
 }
@@ -201,8 +203,10 @@ void heuristic_search(ullmf_calibration_t* calib) {
     heuristic->moved = false;
 
     if (heuristic->remaining_backtrack_steps) {
-        if (ullmf_heuristic_inversion(calib, best_consumption))
+        if (ullmf_heuristic_inversion(calib, best_consumption)) {
+            heuristic->moved = true;
             return;
+        }
     }
 
 
