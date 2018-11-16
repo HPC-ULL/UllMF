@@ -138,11 +138,11 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
             heuristic->previous_consumption, best_consumption,
             heuristic->previous_consumption < best_consumption);
 
-    if (heuristic->previous_consumption < best_consumption) {
-        // TODO try invert
+    if (heuristic->previous_consumption < best_consumption &&
+            heuristic->remaining_backtrack_steps > 0) {
         heuristic->moved = true;
         heuristic->remaining_backtrack_steps--;
-        if (heuristic->remaining_backtrack_steps) {
+        if (!heuristic->are_remaining_movements_last) {
             double * inverted_ratios = malloc(calib->num_procs * sizeof(double));
             ullmf_heuristic_workload_inversion(&inverted_ratios, calib,
                     heuristic->parent.best_candidate, heuristic->previous_candidate);
@@ -153,13 +153,12 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
             dbglog_append(" First Inversion\n");
             free(inverted_ratios);
         } else {
-            if (heuristic->are_remaining_movements_last) {
-                heuristic->parent.best_candidate->set_proportional_workload(
-                        heuristic->parent.best_candidate,
-                        heuristic->previous_candidate->proportional_workload
-                );
-                dbglog_append(" Last movement -> Second Inversion\n");
-            }
+            heuristic->parent.best_candidate->set_proportional_workload(
+                    heuristic->parent.best_candidate,
+                    heuristic->previous_candidate->proportional_workload
+            );
+            dbglog_append(" Last movement -> Second Inversion\n");
+
         }
         return true;
     }

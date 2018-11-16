@@ -15,6 +15,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "debug.h"
 #include "ullmf_workload.h"
 #include "ullmf_class_utils.h"
 #include "ullmf_distribution.h"
