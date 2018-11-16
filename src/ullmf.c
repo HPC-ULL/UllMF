@@ -29,7 +29,6 @@ static void calibrate(ullmf_calibration_t * calib) {
     if (calib->id == calib->root) {
         const int tag = calib->strategy->calibrate(calib);
         if (tag == ULLMF_TAG_RECALIBRATING) {
-        	dbglog_info(" Redistributing Workload \n");
         	calib->strategy->redistribute(calib);
         }
         for (int i = 0; i < calib->num_procs; i++)
@@ -147,7 +146,7 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
 
     dbglog_info("          New Counts: ");
     for (int i = 0; i < calib->num_procs; i++) {
-        dbglog_info("%d ", calib->workload->counts[i]);
+        dbglog_append("%d ", calib->workload->counts[i]);
     }
     dbglog_append("\n");
 

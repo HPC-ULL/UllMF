@@ -172,7 +172,7 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
 
 void heuristic_search(ullmf_calibration_t* calib) {
 	ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
-    dbglog_info(" -- Current strategy: (%s) \n", heuristic->parent._class.name);
+    dbglog_info(" -- Current strategy: %s\n", heuristic->parent._class.name);
     dbglog_info("    measurement type: %s\n", heuristic->parent.mdevice->_class.name);
     dbglog_info("        measurements: ");
     for (int i = 0; i < calib->num_procs; i++) {
@@ -185,9 +185,9 @@ void heuristic_search(ullmf_calibration_t* calib) {
     double * resource_ratios = calloc(calib->num_procs, sizeof(double));
     for (int i = 0; i < calib->num_procs; i++) {
         resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]);
-        dbglog_append(" %.3f", resource_ratios[i]);
-        if (resource_ratios[i] < 1e-6) {
-            dbglog_warn( "BAD RESOURCE RATIO FOR PROCESS %d", i);
+        dbglog_append(" %.6f", resource_ratios[i]);
+        if (resource_ratios[i] < epsilon) {
+            dbglog_warn( "BAD RESOURCE RATIO FOR PROCESS %d\n", i);
         }
     }
     dbglog_append("\n");

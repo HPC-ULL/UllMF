@@ -77,6 +77,12 @@ static ullmf_workload_t * new_from_distribution(ullmf_workload_t* self, ullmf_di
 	for (int i = 0; i < self->num_procs - 1; i++)
 		new_displs[i + 1] = new_displs[i] + new_counts[i];
 
+	dbglog_info("     new_from_distribution: ");
+    for (int i = 0; i < self->num_procs - 1; i++)
+        dbglog_append("%d ",new_counts[i]);
+    dbglog_append("\n: ");
+
+
 	// TODO test new_from_distribution
 	ullmf_workload_t * to_return = _new(Workload, self->num_procs, new_counts, new_displs, self->blocksize);
 	free(new_counts);
