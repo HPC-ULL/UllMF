@@ -146,12 +146,12 @@ enum ullmf_error ullmf_mpi_stop(ullmf_calibration_t * const calib, int * counts,
 #ifndef NDEBUG
     if (calib->id == calib->root) {
         dbglog_info("          New Counts: ");
+        for (int i = 0; i < calib->num_procs; i++) {
+            dbglog_append("%d ", calib->workload->counts[i]);
+        }
+        dbglog_append("\n");
     }
 #endif
-    for (int i = 0; i < calib->num_procs; i++) {
-        dbglog_append("%d ", calib->workload->counts[i]);
-    }
-    dbglog_append("\n");
 
     memcpy(counts, calib->workload->counts, sizeof(*counts) * calib->num_procs);
     memcpy(displs, calib->workload->displs, sizeof(*displs) * calib->num_procs);
