@@ -125,9 +125,19 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 
 void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibration_t* calib,
         ullmf_distribution_t* current, ullmf_distribution_t* previous) {
+    bool invalid = false;
     for (int i = 0; i < calib->num_procs; i++) {
         (*workload_diff)[i] = current->proportional_workload[i] - previous->proportional_workload[i];
         (*workload_diff)[i] = previous->proportional_workload[i] - (*workload_diff)[i];
+        if ((*workload_diff)[i] < epsilon) {
+            invalid = true;
+            break;
+        }
+    }
+    if (invalid) {
+        for (int i = 0; i < calib->num_procs; i++) {
+            (*workload_diff)[i] = previous->proportional_workload[i];
+        }
     }
 }
 
