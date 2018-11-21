@@ -256,15 +256,7 @@ void heuristic_search(ullmf_calibration_t* calib) {
                 dbglog_append("%.3f ", candidates[i]->proportional_workload[j]);
             }
             dbglog_append("(%.6f, %.6f)", candidate_consumption, best_consumption);
-            bool invalid = false;
-            for (int j = 0; j < calib->num_procs; j++) {
-                if (candidates[i]->proportional_workload[j] < epsilon){
-                    invalid = true;
-                    break;
-                }
-            }
-            if (invalid)
-                continue;
+
             if (candidate_consumption < best_consumption) {
                 dbglog_append(" Moving");
                 heuristic->moved = true;
