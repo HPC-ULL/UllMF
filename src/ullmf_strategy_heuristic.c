@@ -54,7 +54,7 @@ bool is_movement_legal(double current_ratio, double ratio_step, int direction) {
 
 
 double get_resource_ratio(double resource_consumption, int counts) {
-    if (resource_consumption < epsilon) // <= 0
+    if (resource_consumption < epsilon || counts == 0) // <= 0
     	return 0;
     else
     	return resource_consumption / (double) counts;
@@ -188,11 +188,14 @@ void heuristic_search(ullmf_calibration_t* calib) {
     // Calculate resources per unit of work
     double * resource_ratios = calloc(calib->num_procs, sizeof(double));
     for (int i = 0; i < calib->num_procs; i++) {
-        resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]);
+        resource_ratios[i] = get_resource_ratio(calib->measurements[i], calib->workload->counts[i]); //, heuristic->min_resource_ratio[i]);
         dbglog_append(" %.6f", resource_ratios[i]);
         if (resource_ratios[i] < epsilon) {
             dbglog_warn( "BAD RESOURCE RATIO FOR PROCESS %d\n", i);
         }
+//        if (heuristic->min_resource_ratio[i] < epsilon) {
+//            heuristic->min_resource_ratio[i] = 5 * resource_ratios[i];
+//        }
     }
     dbglog_append("\n");
 
@@ -253,6 +256,15 @@ void heuristic_search(ullmf_calibration_t* calib) {
                 dbglog_append("%.3f ", candidates[i]->proportional_workload[j]);
             }
             dbglog_append("(%.6f, %.6f)", candidate_consumption, best_consumption);
+            bool invalid = false;
+            for (int j = 0; j < calib->num_procs; j++) {
+                if (candidates[i]->proportional_workload[j] < epsilon){
+                    invalid = true;
+                    break;
+                }
+            }
+            if (invalid)
+                break;
             if (candidate_consumption < best_consumption) {
                 dbglog_append(" Moving");
                 heuristic->moved = true;
@@ -303,6 +315,13 @@ int ullmf_heuristic_calibrate(ullmf_calibration_t* calib) {
 		    heuristic->are_remaining_movements_last = true;
 		}
 	}
+
+//    if (!heuristic->min_resource_ratio) {
+//        heuristic->min_resource_ratio = malloc(calib->num_procs * sizeof(heuristic->min_resource_ratio));
+//        for (int i = 0; i < calib->num_procs; i++) {
+//            heuristic->min_resource_ratio[i] = -1;
+//        }
+//    }
 
 	heuristic_search(calib);
 
