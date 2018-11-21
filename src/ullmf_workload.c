@@ -79,8 +79,8 @@ static ullmf_workload_t * new_from_distribution(ullmf_workload_t* self, ullmf_di
 		new_displs[i + 1] = new_displs[i] + new_counts[i];
 
 	dbglog_info("     new_from_distribution: ");
-    for (int i = 0; i < self->num_procs - 1; i++)
-        dbglog_append("%d ",new_counts[i]);
+    for (int i = 0; i < self->num_procs; i++)
+        dbglog_append("%d ", new_counts[i]);
     dbglog_append("\n");
 
 

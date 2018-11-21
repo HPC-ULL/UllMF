@@ -264,7 +264,7 @@ void heuristic_search(ullmf_calibration_t* calib) {
                 }
             }
             if (invalid)
-                break;
+                continue;
             if (candidate_consumption < best_consumption) {
                 dbglog_append(" Moving");
                 heuristic->moved = true;
