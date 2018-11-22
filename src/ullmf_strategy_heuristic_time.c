@@ -20,9 +20,9 @@
 #include <float.h>
 
 #define _time_reset_probability 0.03
-#define _time_reset_increment 0.02
+#define _time_reset_increment 0.01
 #define _starting_search_distance 0.25
-#define _restarting_search_distance 0.12
+#define _restarting_search_distance 0.08
 #define _search_threshold 0.01
 #define _max_trials_per_call 3
 #define _tolerance 1.05
