@@ -21,7 +21,7 @@
 
 // TODO Parameters inside a constructor for the strategy
 #define _energy_reset_probability 0.05
-#define _energy_reset_increment 0.05
+#define _energy_reset_increment 0.02
 #define _starting_search_distance 0.25
 #define _restarting_search_distance 0.12
 #define _search_threshold 0.01

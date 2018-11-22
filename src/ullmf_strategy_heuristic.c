@@ -169,7 +169,7 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
             free(inverted_ratios);
             return true;
         } else {
-            if (heuristic->are_remaining_movements_last) {
+//            if (heuristic->are_remaining_movements_last) {
                 dbglog_append("Last movement -> Second Inversion\n");
                 heuristic->parent.best_candidate->set_proportional_workload(
                         heuristic->parent.best_candidate,
@@ -177,7 +177,7 @@ bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumpti
                 );
                 heuristic->remaining_backtrack_steps--;
                 return true;
-            }
+//            }
         }
     }
     dbglog_append("Skipping\n");
