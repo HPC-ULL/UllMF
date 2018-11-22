@@ -86,6 +86,7 @@ ullmf_workload_t * move_workload(ullmf_calibration_t* calib, int process, int di
 	ullmf_workload_t * new_workload = calib->workload->new_from_distribution(calib->workload, new_distribution);
 	_delete(new_distribution);
 	free(new_proportional_workload);
+
 	return new_workload;
 }
 
@@ -123,6 +124,7 @@ void free_distributions(int num_candidates, ullmf_workload_t*** candidates) {
 	*candidates = 0;
 }
 
+
 void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibration_t* calib,
         ullmf_distribution_t* current, ullmf_distribution_t* previous) {
     bool invalid = false;
@@ -141,16 +143,17 @@ void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibrati
     }
 }
 
+
 bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumption) {
     ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 
-    dbglog_info("    trying inversion: prev %.4f < curr %.4f? %d (%d steps): ",
+    dbglog_info("    trying inversion: prev %.4f ~< curr %.4f? %d (%d steps): ",
             heuristic->previous_consumption, best_consumption,
             heuristic->previous_consumption < best_consumption,
             heuristic->remaining_backtrack_steps);
 
     // TODO change heuristic->previous_consumption < best_consumption for % based increase
-    if (heuristic->previous_consumption < best_consumption &&
+    if (heuristic->previous_consumption / best_consumption < heuristic->tolerance &&
             heuristic->remaining_backtrack_steps > 0) {
         dbglog_append("last?=%d", heuristic->are_remaining_movements_last);
         if (heuristic->remaining_backtrack_steps == 2) {

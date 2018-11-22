@@ -25,6 +25,7 @@
 #define _restarting_search_distance 0.12
 #define _search_threshold 0.01
 #define _max_trials_per_call 3
+#define _tolerance 1.05
 
 
 static ullmf_strategy_heuristic_time_t _ullmf_strategy_heuristic_time = {
@@ -47,6 +48,7 @@ static ullmf_strategy_heuristic_time_t _ullmf_strategy_heuristic_time = {
     .parent.previous_consumption = DBL_MAX,
     .parent.are_remaining_movements_last = false,
     .parent.remaining_backtrack_steps = 0,
+    .parent.tolerance = _tolerance,
 };
 
 ullmf_strategy_t * ullmf_strategy_heuristic_time = (ullmf_strategy_t *) &_ullmf_strategy_heuristic_time;

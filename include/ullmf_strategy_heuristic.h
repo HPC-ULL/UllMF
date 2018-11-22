@@ -57,6 +57,9 @@ struct ullmf_strategy_heuristic {
 	/** Threshold to stop the heuristic search */
 	double search_threshold;
 
+	/** tolerance for the difference between iterations to trigger inversion */
+	double tolerance;
+
 	/** Maximum number of neighbor generations per iteration */
 	int max_trials_per_call;
 
