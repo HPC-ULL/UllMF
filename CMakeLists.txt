@@ -44,6 +44,8 @@ if (EML)
   set(sources ${sources} 
     ullmf_measurement_device_eml.c
     ullmf_strategy_heuristic_energy.c
+	ullmf_measurement_device_eml_edp.c
+	ullmf_strategy_heuristic_edp.c
   )
 endif(EML)
 
