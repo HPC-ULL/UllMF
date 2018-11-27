@@ -21,6 +21,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+// TODO Once the constructor for the strategy is done, simplify the static strategy modules
+// generating strategies with default parameters using that constructor.
 
 #define ullmf_strategy_heuristic_edp_class "ullmf_strategy_heuristic_edp"
 
