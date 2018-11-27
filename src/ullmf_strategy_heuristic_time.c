@@ -11,12 +11,12 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_calibration.h"
-#include "ullmf_strategy.h"
-#include "ullmf_strategy_heuristic.h"
-#include "ullmf_strategy_heuristic_time.h"
-#include "ullmf_measurement_device_mpi.h"
-#include "debug.h"
+#include "ullmf/calibration.h"
+#include "ullmf/strategy.h"
+#include "ullmf/strategy_heuristic.h"
+#include "ullmf/strategy_heuristic_time.h"
+#include "ullmf/measurement_device_mpi.h"
+#include "ullmf/debug.h"
 #include <float.h>
 
 #define _time_reset_probability 0.03

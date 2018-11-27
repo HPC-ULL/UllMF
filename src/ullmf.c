@@ -16,12 +16,12 @@
 #include <assert.h>
 #include <string.h>
 
-#include "debug.h"
+#include "ullmf/debug.h"
 #include "ullmf.h"
-#include "ullmf_calibration.h"
-#include "ullmf_workload.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_strategy_heuristic.h"
+#include "ullmf/calibration.h"
+#include "ullmf/workload.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/strategy_heuristic.h"
 
 static void calibrate(ullmf_calibration_t * calib) {
     // TODO Optimize

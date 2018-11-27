@@ -16,9 +16,9 @@
 
 #include <stdbool.h>
 
-#include "ullmf_class_utils.h"
-#include "ullmf_calibration.h"
-#include "ullmf_strategy.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/calibration.h"
+#include "ullmf/strategy.h"
 
 
 #ifdef __cplusplus

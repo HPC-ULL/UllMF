@@ -12,10 +12,10 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_distribution.h"
-#include "ullmf_strategy.h"
-#include "ullmf_workload.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/distribution.h"
+#include "ullmf/strategy.h"
+#include "ullmf/workload.h"
 
 
 int init_suite1(void)

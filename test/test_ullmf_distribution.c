@@ -12,8 +12,8 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_distribution.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/distribution.h"
 
 static ullmf_distribution_t* distribution1 = 0;
 

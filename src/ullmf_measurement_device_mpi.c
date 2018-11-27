@@ -9,12 +9,12 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "debug.h"
-#include "ullmf_measurement_device.h"
-#include "ullmf_measurement_device_mpi.h"
+#include "ullmf/debug.h"
+#include "ullmf/measurement_device.h"
+#include "ullmf/measurement_device_mpi.h"
 #include <mpi.h>
 #include <stdbool.h>
-#include "ullmf_class_utils.h"
+#include "ullmf/class_utils.h"
 
 // TODO change to variable number of arguments
 static enum ullmf_measurement_error init(void* self) {

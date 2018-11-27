@@ -9,9 +9,9 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_measurement_device.h"
-#include "ullmf_measurement_device_dummy.h"
-#include "ullmf_class_utils.h"
+#include "ullmf/measurement_device.h"
+#include "ullmf/measurement_device_dummy.h"
+#include "ullmf/class_utils.h"
 
 
 // TODO change to variable number of arguments

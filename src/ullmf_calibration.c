@@ -12,7 +12,7 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_calibration.h"
+#include "ullmf/calibration.h"
 
 static const class_t _Ullmf_calibration = {
     .size = sizeof(ullmf_calibration_t),

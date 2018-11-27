@@ -11,7 +11,7 @@
 #ifndef ULLMF_MEASUREMENT_DEVICE_EML_H
 #define ULLMF_MEASUREMENT_DEVICE_EML_H
 
-#include "ullmf_measurement_device.h"
+#include "ullmf/measurement_device.h"
 #include <stdbool.h>
 #include <eml.h>
 #include <mpi.h>

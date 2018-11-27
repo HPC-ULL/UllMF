@@ -10,8 +10,8 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_measurement_device_mpi.h"
-#include "ullmf_measurement_device.h"
+#include "ullmf/measurement_device_mpi.h"
+#include "ullmf/measurement_device.h"
 #include <unistd.h>
 
 

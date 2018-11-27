@@ -12,11 +12,11 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_calibration.h"
-#include "ullmf_strategy_heuristic.h"
-#include "ullmf_strategy_heuristic_time.h"
-#include "ullmf_strategy_heuristic_energy.h"
-#include "ullmf_workload.h"
+#include "ullmf/calibration.h"
+#include "ullmf/strategy_heuristic.h"
+#include "ullmf/strategy_heuristic_time.h"
+#include "ullmf/strategy_heuristic_energy.h"
+#include "ullmf/workload.h"
 
 
 static const float error_tolerance = 1e-9;

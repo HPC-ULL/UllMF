@@ -11,15 +11,14 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_distribution.h"
-#include "ullmf_strategy.h"
-#include "ullmf_strategy_calibrate.h"
-#include "ullmf_measurement_device.h"
-#include "ullmf_measurement_device_mpi.h"
-#include "debug.h"
+#include "ullmf/distribution.h"
+#include "ullmf/strategy.h"
+#include "ullmf/strategy_calibrate.h"
+#include "ullmf/measurement_device.h"
+#include "ullmf/measurement_device_mpi.h"
+#include "ullmf/debug.h"
 
 #include <float.h>
-#include <ullmf_distribution.h>
 
 static const double epsilon = 1e-9;
 #define _threshold 0.10

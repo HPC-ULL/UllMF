@@ -14,8 +14,8 @@
 #ifndef ULLMF_STRATEGY_HEURISTIC_EDP_H
 #define ULLMF_STRATEGY_HEURISTIC_EDP_H
 
-#include "ullmf_strategy.h"
-#include "ullmf_strategy_heuristic.h"
+#include "ullmf/strategy.h"
+#include "ullmf/strategy_heuristic.h"
 
 
 #ifdef __cplusplus

@@ -9,11 +9,11 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_measurement_device.h"
-#include "ullmf_measurement_device_eml.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_timer.h"
-#include "debug.h"
+#include "ullmf/measurement_device.h"
+#include "ullmf/measurement_device_eml.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/timer.h"
+#include "ullmf/debug.h"
 #include <mpi.h>
 #include <eml.h>
 #include <eml/data.h>

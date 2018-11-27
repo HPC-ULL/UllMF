@@ -18,8 +18,8 @@
 #error "POSIX timers are not supported"
 #endif
 
-#include "debug.h"
-#include <ullmf_timer.h>
+#include "ullmf/debug.h"
+#include "ullmf/timer.h"
 
 unsigned long long nanotimestamp() {
     struct timespec tms;

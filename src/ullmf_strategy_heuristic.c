@@ -11,10 +11,10 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_strategy_heuristic.h"
-#include "ullmf_calibration.h"
-#include "ullmf_utils.h"
-#include "debug.h"
+#include "ullmf/strategy_heuristic.h"
+#include "ullmf/calibration.h"
+#include "ullmf/utils.h"
+#include "ullmf/debug.h"
 
 #include <math.h>
 #include <float.h>

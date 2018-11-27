@@ -6,13 +6,16 @@ endif(EML)
 
 target_link_libraries(ullmf ${MPI_LIBRARIES})
 
+
+
 set_target_properties(ullmf PROPERTIES
     VERSION ${PROJECT_VERSION}
-    SOVERSION 1
-    PUBLIC_HEADER "api/ullmf.h")
+    SOVERSION 1)
+
+install(FILES ${PUBLIC_HEADERS} 
+        DESTINATION include/ullmf)
 
 target_include_directories(ullmf PRIVATE ../include)
-#target_include_directories(ullmf PRIVATE .)
 install(TARGETS ullmf 
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

@@ -10,8 +10,8 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_workload.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/workload.h"
 
 static ullmf_workload_t* workload1;
 static int counts[2] = {2, 2};

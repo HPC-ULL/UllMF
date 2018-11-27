@@ -15,8 +15,8 @@
 #define ULLMF_H
 
 #include <mpi.h>
-#include "ullmf_strategy.h"
-#include "ullmf_calibration.h"
+#include "ullmf/strategy.h"
+#include "ullmf/calibration.h"
 
 #ifdef __cplusplus
 extern "C" {

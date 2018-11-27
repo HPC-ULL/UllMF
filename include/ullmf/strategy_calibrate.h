@@ -6,32 +6,35 @@
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * File: ullmf_strategy_heuristic_energy.h
- * Date: 20 jun. 2018
+ * File: ullmf_strategy_calibrate.h
+ * Date: 20/06/2018
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#ifndef ULLMF_STRATEGY_HEURISTIC_ENERGY_H
-#define ULLMF_STRATEGY_HEURISTIC_ENERGY_H
+#ifndef ULLMF_STRATEGY_CALIBRATE_H
+#define ULLMF_STRATEGY_CALIBRATE_H
 
-#include "ullmf_strategy.h"
-#include "ullmf_strategy_heuristic.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/calibration.h"
+#include "ullmf/strategy.h"
+#include "ullmf/measurement_device.h"
 
+#define ullmf_strategy_calibrate_class "strategy_calibrate"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define ullmf_strategy_heuristic_energy_class "ullmf_strategy_heuristic_energy"
-
-typedef struct ullmf_strategy_heuristic_energy ullmf_strategy_heuristic_energy_t;
+typedef struct ullmf_strategy_calibrate ullmf_strategy_calibrate_t;
 
 /** Contains state, properties and methods for an strategy */
-struct ullmf_strategy_heuristic_energy {
-    ullmf_strategy_heuristic_t parent;
+struct ullmf_strategy_calibrate {
+    ullmf_strategy_t parent;
+
+    double threshold;
 };
 
-extern ullmf_strategy_t * ullmf_strategy_heuristic_energy;
+extern ullmf_strategy_t * ullmf_strategy_calibrate;
 
 #ifdef __cplusplus
 }

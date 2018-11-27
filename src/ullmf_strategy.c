@@ -11,10 +11,10 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_calibration.h"
-#include "ullmf_distribution.h"
-#include "ullmf_strategy.h"
-#include "debug.h"
+#include "ullmf/calibration.h"
+#include "ullmf/distribution.h"
+#include "ullmf/strategy.h"
+#include "ullmf/debug.h"
 
 #include <math.h>
 #include <stdio.h>

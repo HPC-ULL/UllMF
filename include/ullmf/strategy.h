@@ -16,10 +16,10 @@
 
 typedef struct ullmf_strategy ullmf_strategy_t; // Don't move this statement. It avoids a circular dependency
 
-#include "ullmf_class_utils.h"
-#include "ullmf_calibration.h"
-#include "ullmf_distribution.h"
-#include "ullmf_measurement_device.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/calibration.h"
+#include "ullmf/distribution.h"
+#include "ullmf/measurement_device.h"
 
 #ifdef __cplusplus
 extern "C" {

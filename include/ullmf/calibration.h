@@ -19,9 +19,9 @@
 
 typedef struct ullmf_calibration ullmf_calibration_t;
 
-#include "ullmf_class_utils.h"
-#include "ullmf_strategy.h"
-#include "ullmf_workload.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/strategy.h"
+#include "ullmf/workload.h"
 
 #define ullmf_calibration_class "ullmf_calibration"
 

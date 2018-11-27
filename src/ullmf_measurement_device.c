@@ -11,7 +11,7 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "ullmf_measurement_device.h"
+#include "ullmf/measurement_device.h"
 
 double measurement_device_get_measurement(void* self) {
     return ((measurement_device_t *)self)->measurement;

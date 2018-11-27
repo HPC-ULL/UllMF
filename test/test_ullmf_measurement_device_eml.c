@@ -9,8 +9,8 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 #include "CUnit/Basic.h"
-#include "ullmf_measurement_device_eml.h"
-#include "ullmf_measurement_device.h"
+#include "ullmf/measurement_device_eml.h"
+#include "ullmf/measurement_device.h"
 #include <unistd.h>
 #include <stdbool.h>
 

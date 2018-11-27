@@ -11,8 +11,8 @@
  * Author: Alberto Cabrera <Alberto.Cabrera@ull.edu.es>
  */
 
-#include "debug.h"
-#include "ullmf_utils.h"
+#include "ullmf/debug.h"
+#include "ullmf/utils.h"
 
 #include <stdbool.h>
 

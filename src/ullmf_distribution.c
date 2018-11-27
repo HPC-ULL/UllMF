@@ -15,10 +15,10 @@
 #include <string.h>
 #include <math.h>
 
-#include "debug.h"
-#include "ullmf_distribution.h"
-#include "ullmf_utils.h"
-#include "ullmf_class_utils.h"
+#include "ullmf/debug.h"
+#include "ullmf/distribution.h"
+#include "ullmf/utils.h"
+#include "ullmf/class_utils.h"
 
 static const double precision = 1e-9;
 

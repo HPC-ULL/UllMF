@@ -15,10 +15,10 @@
 #include <string.h>
 #include <math.h>
 
-#include "debug.h"
-#include "ullmf_workload.h"
-#include "ullmf_class_utils.h"
-#include "ullmf_distribution.h"
+#include "ullmf/debug.h"
+#include "ullmf/workload.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/distribution.h"
 
 static void set_workload(ullmf_workload_t * self, const int * const counts, const int * const displs) {
 	 size_t memsize = sizeof(self->counts) * self->num_procs;

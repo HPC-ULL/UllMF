@@ -15,8 +15,8 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#include "ullmf_class_utils.h"
-#include "ullmf_measurement_device.h"
+#include "ullmf/class_utils.h"
+#include "ullmf/measurement_device.h"
 
 enum ullmf_class_error class_typecheck(void* self, const char * classname) {
     class_t self_cl = *((class_t *) self);

@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "ullmf_class_utils.h"
+#include "ullmf/class_utils.h"
 
 #ifdef __cplusplus
 extern "C" {

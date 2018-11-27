@@ -10,8 +10,8 @@
  */
 
 #include "CUnit/Basic.h"
-#include "ullmf_measurement_device_dummy.h"
-#include "ullmf_measurement_device.h"
+#include "ullmf/measurement_device_dummy.h"
+#include "ullmf/measurement_device.h"
 
 extern measurement_device_dummy_t dummy_device;
 

@@ -13,7 +13,7 @@
 #ifndef ULLMF_WORKLOAD_H
 #define ULLMF_WORKLOAD_H
 
-#include "ullmf_distribution.h"
+#include "ullmf/distribution.h"
 
 #define ullmf_workload_class "workload"
 

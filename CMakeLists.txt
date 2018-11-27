@@ -4,7 +4,6 @@ project (ullmf VERSION 0.1)
 include(GNUInstallDirs)
 include(CTest)
 
-configure_file(config/ullmfConfig.h.in include/ullmfConfig.h @ONLY)
 configure_file(config/ullmf.pc.in ullmf.pc @ONLY)
 
 set(CMAKE_MODULE_PATH
@@ -34,6 +33,28 @@ set(sources
 	ullmf_timer.c
 	ullmf_utils.c
 	ullmf.c
+)
+
+set(PUBLIC_HEADERS
+	${PROJECT_SOURCE_DIR}/include/ullmf.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/calibration.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/class_utils.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/debug.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/distribution.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/measurement_device_dummy.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/measurement_device_eml_edp.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/measurement_device_eml.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/measurement_device.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/measurement_device_mpi.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy_calibrate.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy_heuristic_edp.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy_heuristic_energy.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy_heuristic.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/strategy_heuristic_time.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/timer.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/utils.h
+	${PROJECT_SOURCE_DIR}/include/ullmf/workload.h
 )
 
 find_package(MPI REQUIRED)
