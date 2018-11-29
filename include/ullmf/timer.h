@@ -9,12 +9,12 @@
 
 /**
  * @file
- * Internal functions dealing with time
+ * Internal functions for time measurement. Mostly substituted with MPI_Wtime()
  * @ingroup internalapi
  */
 
-#ifndef EML_TIMER_H
-#define EML_TIMER_H
+#ifndef ULLMF_TIMER_H
+#define ULLMF_TIMER_H
 
 /**
  * Returns nanoseconds since some unspecified starting point.
@@ -36,4 +36,4 @@ unsigned long long nanotimestamp();
  */
 unsigned long long millitimestamp();
 
-#endif /*EML_TIMER_H*/
+#endif /*ULLMF_TIMER_H*/

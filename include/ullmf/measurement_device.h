@@ -19,12 +19,20 @@
 extern "C" {
 #endif
 
+/** UllMF Measurement Error codes */
 enum ullmf_measurement_error {
+    /// Success
     ULLMF_MEASUREMENT_SUCCESS = 0,
+    /// Measurement has already started (When you start measurement multiple times)
     ULLMF_MEASUREMENT_STARTED,
+    /// Measurement is running (For some cases when you want to stop measurement but the physical device has not ended)
     ULLMF_MEASUREMENT_RUNNING,
+    /// Measurement has not been started (and you are trying to stop it)
     ULLMF_MEASUREMENT_NOT_STARTED,
+    /// Measurement procedure called from the wrong structure.
+    /// This should only be encountered when developing new modules if they are not properly done
     ULLMF_MEASUREMENT_WRONG_CLASS,
+    /// Error in the measurement caused by the physical measurement device or a library that is not UllMF
     ULLMF_MEASUREMENT_INTERNAL_LIBRARY_ERROR,
 };
 
@@ -96,6 +104,11 @@ struct measurement_device {
     double (*get_measurement) (void* self);
 };
 
+/**
+ * Generic implementation of the get_measurement getter.
+ *
+ * @retval double value of the variable measurement
+ */
 double measurement_device_get_measurement(void* self);
 
 #ifdef __cplusplus

@@ -20,7 +20,9 @@ More details can be found in the associated publications.
 Documentation
 -------------
 
-Doxygen-generated documentation will be added soon.
+Doxygen-generated can be found at:
+
+https://hpc-ull.github.io/ullmf/
 
 License
 -------

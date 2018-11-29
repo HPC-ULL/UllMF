@@ -27,8 +27,13 @@ extern "C" {
 
 #define ullmf_strategy_class "ullmf_strategy"
 
+/**
+ * Determines the behavior of the calibrate method. Used in ullmf_mpi_stop()
+ */
 enum ullmf_tag {
+    /// The workload is balanced, it is not necessary to redistribute the counts and displs.
 	ULLMF_TAG_CALIBRATED = 0,
+	/// The workload has changed, it is necessary to redistribute the work.
 	ULLMF_TAG_RECALIBRATING
 };
 
@@ -37,18 +42,31 @@ struct ullmf_strategy {
     /** Object inheritance */
     class_t _class;
 
-    /** Measurement device used by the strategy */
+    /** Measurement device used by the strategy. It is defined in the concrete strategy. */
     measurement_device_t* mdevice;
 
-    /** Main Calibration Procedure */
+    /** Main Calibration Procedure.
+     * This method has to be implemented in the concrete strategy.
+     * It has to determine how the workload changes based on the metrics gathered in a
+     * start stop operation.
+     */
     int (*calibrate)(ullmf_calibration_t* calib);
 
-    /** Redistribution procedure */
+    /** Redistribution procedure.
+     * Once the new workload distribution is calculated, the distribution is transformed into a workload,
+     * with the corresponding counts and displs.
+     */
     void (*redistribute)(ullmf_calibration_t* calib);
 
+    /**
+     * Selected workload distribution from the load balancing methods.
+     */
     ullmf_distribution_t* best_candidate;
 };
 
+/** Generic redistribution.
+ *  Transforms the strategy->best_candidate into a valid calib->workload, which calculates the proper counts and displs.
+ */
 void ullmf_strategy_redistribute(ullmf_calibration_t* calib);
 
 extern const void * Ullmf_strategy;

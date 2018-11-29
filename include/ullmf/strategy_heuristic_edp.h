@@ -21,18 +21,25 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-// TODO Once the constructor for the strategy is done, simplify the static strategy modules
-// generating strategies with default parameters using that constructor.
 
 #define ullmf_strategy_heuristic_edp_class "ullmf_strategy_heuristic_edp"
 
 typedef struct ullmf_strategy_heuristic_edp ullmf_strategy_heuristic_edp_t;
 
-/** Contains state, properties and methods for an strategy */
+/** Heuristic Strategy for Energy delay product.
+ *  Heuristic Search instantiation for Energy delay product measurements.
+ *
+ *  TODO delete the class when a constructor is implemented for strategies in general.
+ *  This can be substituted by a single ullmf_strategy_heuristic_energy object.
+ */
 struct ullmf_strategy_heuristic_edp {
+    /** Object inheritance */
     ullmf_strategy_heuristic_t parent;
 };
 
+/**
+* External object instantiation to be used by users.
+*/
 extern ullmf_strategy_t * ullmf_strategy_heuristic_edp;
 
 #ifdef __cplusplus

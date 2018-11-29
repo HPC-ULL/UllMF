@@ -16,8 +16,6 @@
 
 #include <stdbool.h>
 
-bool f_is_zero(const double remaining_movement, const double zero_tolerance) {
-//	dbglog_info("  is_zero? %.2f, %d\n", remaining_movement,
-//			remaining_movement > -zero_tolerance && remaining_movement < zero_tolerance);
-	return remaining_movement > -zero_tolerance && remaining_movement < zero_tolerance;
+bool f_is_zero(const double value, const double tolerance) {
+	return value > -tolerance && value < tolerance;
 }
