@@ -23,11 +23,45 @@ extern "C" {
 
 typedef struct ullmf_workload ullmf_workload_t;
 
+/**
+ * Effective distribution of work among different processors:
+ * A Workload for 4 processes can be represented as:
+ * counts : [1000, 2000, 3000, 4000]
+ * displs : [0, 1000, 3000, 6000]
+ * num_procs : 4
+ * proportional_workload : [0.1, 0.2, 0.3, 0.4]
+ * size: 10000
+ * blocksize : 2
+ */
+
 struct ullmf_workload {
+    /**
+     * Class size, name, constructor and destructor.
+     * costructor(int num_procs, int * counts, int * displs, int blocksize)
+     */
     const void * _class;
-    int num_procs; // Num processes
-    int * counts; // Amount of workload
-    int * displs; // Workload location
+
+    /**
+     * Total number of processes. Used for array sizes.
+     */
+    int num_procs;
+
+    /**
+     * Array of size num_procs with the amount of work assigned to each process.
+     * e.g: [1000, 2000, 3000, 4000]
+     */
+    int * counts;
+
+    /**
+     * Array of size num_procs with location of the counts in the problem data.
+     * E.g: displs : [0, 1000, 3000, 6000]
+     */
+    int * displs;
+
+    /**
+     * Normalized workload for each process
+     * E.g: proportional_workload : [0.1, 0.2, 0.3, 0.4]
+     */
     double * proportional_workload; // Ratios of work assigned to each process
     size_t size; // Total workload
     int blocksize; // Minimum amount of work

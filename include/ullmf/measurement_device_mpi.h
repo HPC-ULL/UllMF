@@ -21,11 +21,18 @@ extern "C" {
 
 typedef struct measurement_device_mpi measurement_device_mpi_t;
 
-/** Contains state, properties and methods for a dummy device */
+/**
+ * Contains state, properties and methods for the mpi device.
+ * It is only extended for naming the type.
+ */
 struct measurement_device_mpi {
+    /**
+     * Object Inheritance
+     */
     measurement_device_t parent;
 };
 
+/** Initialization of the object for usage inside the strategies. */
 extern measurement_device_mpi_t ullmf_mpi_device;
 
 #ifdef __cplusplus

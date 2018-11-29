@@ -26,11 +26,20 @@ extern "C" {
 
 typedef struct ullmf_strategy_heuristic_energy ullmf_strategy_heuristic_energy_t;
 
-/** Contains state, properties and methods for an strategy */
+/** Heuristic Strategy for Energy.
+ *  Heuristic Search instantiation for Energy measurements.
+ *
+ *  TODO delete the class when a constructor is implemented for strategies in general.
+ *  This can be substituted by a single ullmf_strategy_heuristic_energy object.
+ */
 struct ullmf_strategy_heuristic_energy {
+    /** Object inheritance */
     ullmf_strategy_heuristic_t parent;
 };
 
+/**
+* External object instantiation to be used by users.
+*/
 extern ullmf_strategy_t * ullmf_strategy_heuristic_energy;
 
 #ifdef __cplusplus

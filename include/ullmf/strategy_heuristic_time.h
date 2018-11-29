@@ -26,11 +26,19 @@ extern "C" {
 
 typedef struct ullmf_strategy_heuristic_time ullmf_strategy_heuristic_time_t;
 
-/** Contains state, properties and methods for an strategy */
-struct ullmf_strategy_heuristic_time {
+/** Heuristic Strategy for Time.
+ *  Heuristic Search instantiation for Time measurements.
+ *
+ *  TODO delete the class when a constructor is implemented for strategies in general.
+ *  This can be substituted by a single ullmf_strategy_heuristic_energy object.
+ */struct ullmf_strategy_heuristic_time {
+    /** Object inheritance */
     ullmf_strategy_heuristic_t parent;
 };
 
+ /**
+ * External object instantiation to be used by users.
+ */
 extern ullmf_strategy_t * ullmf_strategy_heuristic_time;
 
 

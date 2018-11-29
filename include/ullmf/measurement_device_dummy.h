@@ -21,15 +21,21 @@ extern "C" {
 
 typedef struct measurement_device_dummy measurement_device_dummy_t;
 
-/** Contains state, properties and methods for a dummy device */
+/** Contains state, properties and methods for a dummy device. Debug purposes. */
 struct measurement_device_dummy {
+    /**
+     * Structure for class inheritance
+     */
     measurement_device_t parent;
 
-    /** Measurement device specific measurement units
-     *
+    /**
+     * Measurement device specific measurement units
      */
     long long measurement_ll;
 
+    /**
+     * Id of the process used as 'seed' for the measurements provided by the dummy.
+     */
     int id;
 };
 

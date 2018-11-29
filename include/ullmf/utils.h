@@ -14,13 +14,26 @@
 #ifndef _INCLUDE_ULLMF_UTILS_H_
 #define _INCLUDE_ULLMF_UTILS_H_
 
+/**
+ * @file
+ * Internal generic functions required by various modules.
+ * @ingroup internalapi
+ */
+
 #include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool f_is_zero(const double remaining_movement, const double zero_tolerance);
+/**
+ * Is a double zero?.
+ * @param value: Value to be compared to zero.
+ * @param tolerance: Limit for the double value to be considered 0.
+ *
+ * @return: True if | value | < tolerance
+ */
+bool f_is_zero(const double value, const double tolerance);
 
 #ifdef __cplusplus
 }

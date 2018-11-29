@@ -27,13 +27,24 @@ extern "C" {
 
 typedef struct ullmf_strategy_calibrate ullmf_strategy_calibrate_t;
 
-/** Contains state, properties and methods for an strategy */
+/** Strategy calibrate.
+ *  Redistributes workload based on the processor speed (workload units per second) to minimize
+ *  the idle times between problem iterations.
+ */
 struct ullmf_strategy_calibrate {
+    /** Object inheritance */
     ullmf_strategy_t parent;
 
+    /**
+     * Normalized difference of time (1 - (worst_time / best_time) < threshold)
+     * allowed between all processes to consider them balanced
+     */
     double threshold;
 };
 
+/**
+ * External object instantiation to be used by users.
+ */
 extern ullmf_strategy_t * ullmf_strategy_calibrate;
 
 #ifdef __cplusplus

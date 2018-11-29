@@ -37,19 +37,35 @@ struct ullmf_calibration {
 
     /** Calibration strategy */
     ullmf_strategy_t* strategy;
-    /** Current Workload */
+
+    /** Current Workload Distribution */
     ullmf_workload_t* workload;
 
-    // calibration
-    double * measurements; // Process last measurements
-    int num_procs; // Number of processes
-    int id; // Process id
+    /** Last measurements gathered for the processes */
+    double * measurements;
+
+    /** Total number of processes in the parallel execution */
+    int num_procs;
+
+    /** Current Process Id */
+    int id;
+
+    /** Root/Master process that manages the workload distribution logic */
     int root; // Root process
+
 #ifndef NDEBUG
+    /** Current Iteration inside the calibration. Used only for Debug purposes. */
     size_t iteration; // Debug purposes
 #endif
+
+    /** Internal State of the Calibration Procedures.
+     *  Started == 1 means ullmf_mpi_start has been called.
+     *  Resets to 0 when ullmf_mpi_stop is called.
+     */
     bool started;
-    MPI_Comm comm; // MPI communicator
+
+    /** MPI communicator */
+    MPI_Comm comm;
 };
 
 extern const void * Ullmf_calibration;
