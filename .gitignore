@@ -1,4 +1,5 @@
 build/
+.settings/language.settings.xml
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
