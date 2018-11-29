@@ -45,7 +45,7 @@ Homepage: http://cap.pcg.ull.es
 Acknowledgements
 ----------------
 
-This work was supported by the Spanish Ministry of Education and Science through
+This work was supported by the Spanish Ministry of Science, Innovation and Universities through
 the TIN2016-78919-R project, the Government of the Canary Islands,
 with the project ProID2017010130 and the grant TESIS2017010134, which is
 co-financed by the Ministry of Economy, Industry, Commerce and Knowledge of Canary Islands and 
