@@ -1,0 +1,24 @@
+Installation 
+============
+
+Installation from github
+------------------------
+
+	cd build/
+	cmake .. -DCMAKE_BUILD_TYPE=Release 
+	make
+	ctest  # test execution
+	make install
+
+In order to debug, it can be build with CMAKE_BUILD_TYPE=Debug.
+The library will then send its debug information to STDERR.
+
+Documentation
+-------------
+
+In order to generate documentation:
+	cd build/
+	cmake .. -DCMAKE_BUILD_TYPE=Release 
+	make doc
+
+The generated doxygen files will be inside build/doxygen-doc/

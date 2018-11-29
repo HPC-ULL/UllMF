@@ -102,8 +102,6 @@ INPUT                  = @PROJECT_SOURCE_DIR@/include/ @PROJECT_SOURCE_DIR@/incl
                          @PROJECT_SOURCE_DIR@/doc/groups.dox \
                          @PROJECT_SOURCE_DIR@/README.md \
                          @PROJECT_SOURCE_DIR@/INSTALL \
-                         @PROJECT_SOURCE_DIR@/doc/configuration.md \
-                         @PROJECT_SOURCE_DIR@/doc/json.md \
                          @PROJECT_SOURCE_DIR@/doc/usage.md
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
