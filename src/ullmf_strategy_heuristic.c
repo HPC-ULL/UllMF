@@ -147,15 +147,17 @@ void ullmf_heuristic_workload_inversion(double ** workload_diff, ullmf_calibrati
 bool ullmf_heuristic_inversion(ullmf_calibration_t* calib, double best_consumption) {
     ullmf_strategy_heuristic_t * heuristic = (ullmf_strategy_heuristic_t *) calib->strategy;
 
-    dbglog_info("    trying inversion: prev %.4f ~< curr %.4f? %d (%d steps): ",
+    dbglog_info("    trying inversion: prev %.4f ~< curr %.4f? (%.4f < %.4f) %d (%d steps): ",
             heuristic->previous_consumption, best_consumption,
-            heuristic->previous_consumption < best_consumption,
+			heuristic->previous_consumption / best_consumption,
+			heuristic->tolerance,
+			heuristic->previous_consumption / best_consumption < heuristic->tolerance,
             heuristic->remaining_backtrack_steps);
 
     // TODO change heuristic->previous_consumption < best_consumption for % based increase
     if (heuristic->previous_consumption / best_consumption < heuristic->tolerance &&
             heuristic->remaining_backtrack_steps > 0) {
-        dbglog_append("last?=%d", heuristic->are_remaining_movements_last);
+        dbglog_append("last? %d ", heuristic->are_remaining_movements_last);
         if (heuristic->remaining_backtrack_steps == 2) {
             dbglog_append("First Inversion\n");
             double * inverted_ratios = malloc(calib->num_procs * sizeof(double));
