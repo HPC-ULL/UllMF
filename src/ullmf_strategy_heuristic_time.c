@@ -25,7 +25,7 @@
 #define _restarting_search_distance 0.08
 #define _search_threshold 0.01
 #define _max_trials_per_call 3
-#define _tolerance 1.05
+#define _tolerance 0.95
 
 
 static ullmf_strategy_heuristic_time_t _ullmf_strategy_heuristic_time = {
